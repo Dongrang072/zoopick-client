@@ -89,8 +89,8 @@ export type DayOfWeek = "MON" | "TUE" | "WED" | "THU" | "FRI" | "SAT" | "SUN";
 
 export interface CourseSchedule {
   dayOfWeek: DayOfWeek;
-  startTime: string; // HH:mm:ss
-  endTime: string; // HH:mm:ss
+  startTime: string;
+  endTime: string;
 }
 
 export interface Course {
@@ -147,7 +147,14 @@ export interface ImageUploadResponse {
 
 // Lost Item Types
 export type ItemType = "LOST" | "FOUND";
-export type ItemStatus = "REPORTED" | "RESOLVED" | "THEFT_CONFIRMED";
+export type ItemStatus =
+  | "REPORTED"
+  | "MATCHED"
+  | "IN_LOCKER"
+  | "IN_TRANSIT"
+  | "RETRIEVING"
+  | "RETURNED"
+  | "THEFT_CONFIRMED";
 
 export interface ItemPost {
   id: number;
@@ -160,7 +167,7 @@ export interface ItemPost {
   building_id: number;
   data_address: string;
   created_at: string;
-  reporter_id?: number; // 백엔드 추가 예정
+  reporter_id?: number;
 }
 
 export interface ItemListResponse {
@@ -213,7 +220,7 @@ export interface ChatRoomRecord {
   owner_nickname: string;
   finder_nickname: string;
   item_name: string;
-  item_id?: number; // 백엔드 추가 예정 (채팅방에서 게시글 상세로 이동 시 필요)
+  item_id?: number;
 }
 
 export interface MessageRecord {
@@ -230,7 +237,7 @@ export interface ListMessagesResult {
 }
 
 export interface CreateChatRoomRequest {
-  item_id: number;
+  item_id: number | null;
   counterpart_id: number;
 }
 
@@ -259,19 +266,30 @@ export interface MessageFilter {
 
 // Matching Types
 export type MatchStatus = "CANDIDATE" | "NOTIFIED" | "CONFIRMED" | "REJECTED";
+export type MatchType = "LOCKER" | "CHAT";
 
 export interface ItemMatchResultResponse {
   score: number;
   status: MatchStatus;
-  match_id: string;
+  match_id: number; // string → number 변경
   found_item_id: number;
   found_post_id: number;
   found_post_title: string;
   found_image_url: string;
-  locationName: string;
+  location_name: string; // locationName → location_name 변경
   found_nickname: string;
   found_department: string;
-  finder_id?: number; // 백엔드 추가 예정 (시나리오 ⑤ 직접 전달 시 필요)
+  counterpart_id: number;
+  finder_id?: number;
+}
+
+// 매칭 확정 응답 (MatchConfirmResponse 로 명세와 맞춤)
+export interface MatchConfirmResponse {
+  match_id: number;
+  match_type: MatchType;
+  locker_id: number | null;
+  found_item_id: number;
+  counterpart_id: number;
 }
 
 export interface MatchManualRequest {
@@ -287,36 +305,36 @@ export interface MatchManualResponse {
   locker_id: number;
 }
 
-
+// CCTV Types
 export type CctvReviewStatus = "CONFIRMED_SELF" | "REJECTED_SELF";
 
 export interface CctvMatchedLostItem {
-    lost_item_id: number;
-    title: string;
-    category: string;
-    match_count: number;
-    reported_at: string;
-    image_url: string | null;
+  lost_item_id: number;
+  title: string;
+  category: string;
+  match_count: number;
+  reported_at: string;
+  image_url: string | null;
 }
 
 export interface CctvMyItemsResponse {
-    matched_lost_items: CctvMatchedLostItem[];
+  matched_lost_items: CctvMatchedLostItem[];
 }
 
 export interface CctvDetection {
-    match_id: number;
-    score: number;
-    detected_at: string;
-    building_name: string;
-    room_name: string;
-    item_snapshot_url: string | null;
-    moment_snapshot_url: string | null;
+  match_id: number;
+  score: number;
+  detected_at: string;
+  building_name: string;
+  room_name: string;
+  item_snapshot_url: string | null;
+  moment_snapshot_url: string | null;
 }
 
 export interface CctvItemDetectionsResponse {
-    detections: CctvDetection[];
+  detections: CctvDetection[];
 }
 
 export interface CctvReviewRequest {
-    review_status: CctvReviewStatus;
+  review_status: CctvReviewStatus;
 }

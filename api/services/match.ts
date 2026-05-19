@@ -1,9 +1,10 @@
 import client from "../client";
 import {
-    ApiResponse,
-    ItemMatchResultResponse,
-    MatchManualRequest,
-    MatchManualResponse,
+  ApiResponse,
+  ItemMatchResultResponse,
+  MatchConfirmResponse,
+  MatchManualRequest,
+  MatchManualResponse,
 } from "../types";
 
 export const matchService = {
@@ -16,9 +17,9 @@ export const matchService = {
     return res.data;
   },
 
-  // 매칭 수락
+  // 매칭 수락 → match_type, counterpart_id, locker_id 반환
   confirmMatch: async (matchId: number) => {
-    const res = await client.post<ApiResponse<number>>(
+    const res = await client.post<ApiResponse<MatchConfirmResponse>>(
       `/api/matches/${matchId}/confirm`,
     );
     return res.data;

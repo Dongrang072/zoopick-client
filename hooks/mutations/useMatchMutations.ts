@@ -4,7 +4,7 @@ import { MatchManualRequest } from "../../api/types";
 import { MATCH_QUERY_KEYS } from "../queries/useMatchQueries";
 
 export const useMatchMutations = {
-  // 매칭 수락
+  // 매칭 수락 → ConfirmMatchResult 반환
   useConfirmMatch: () => {
     const queryClient = useQueryClient();
     return useMutation({
