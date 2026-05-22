@@ -248,6 +248,7 @@ export default function ChatRoomScreen() {
   const closeChatRoomMutation = useChatMutations.useCloseChatRoom(roomIdNum);
   const reopenChatRoomMutation = useChatMutations.useReopenChatRoom(roomIdNum);
 
+  const isOwnerQrScanned = roomData?.data.item_name === "";
   const chatRoom = roomData?.success ? roomData.data : null;
   const isOwner = profile?.nickname === chatRoom?.owner_nickname;
   const counterpartNickname = isOwner
@@ -344,14 +345,18 @@ export default function ChatRoomScreen() {
       setShowCloseModal(false);
       closeChatRoomMutation.mutate(reason, {
         onSuccess: () => {
-          if (reason === "RETURNED" && navigateToScan) {
+          const itemId = chatRoom?.item_id;
+          if (reason === "RETURNED" && navigateToScan && itemId) {
             Toast.show({
               type: "success",
               text1: "수령 완료! 사물함 QR을 스캔해서 물건을 꺼내주세요.",
               position: "bottom",
               visibilityTime: 3000,
             });
-            router.replace("/(tabs)/scan" as any);
+            router.replace({
+              pathname: ROUTES.SCAN,
+              params: { itemId: itemId }
+            });
           } else {
             Toast.show({
               type: "success",
@@ -597,12 +602,15 @@ export default function ChatRoomScreen() {
             <Text style={styles.modalDesc}>거래를 어떻게 종료할까요?</Text>
             {isOwner ? (
               <>
+              {isOwnerQrScanned ? (<></>) : (
                 <TouchableOpacity
                   style={styles.modalBtn}
                   onPress={() => handleClose("RETURNED", true)}
                 >
                   <Text style={styles.modalBtnText}>📦 사물함에서 물건을 꺼낼게요</Text>
                 </TouchableOpacity>
+              )
+              }
                 <TouchableOpacity
                   style={styles.modalBtn}
                   onPress={() => handleClose("RETURNED", false)}
@@ -612,12 +620,15 @@ export default function ChatRoomScreen() {
               </>
             ) : (
               <>
+              {isOwnerQrScanned ? (<></>) : (
                 <TouchableOpacity
                   style={styles.modalBtn}
                   onPress={() => handleOpenLocker()}
                 >
                   <Text style={styles.modalBtnText}>📦 사물함에 물건을 넣을게요</Text>
                 </TouchableOpacity>
+              )
+              }
                 <TouchableOpacity
                   style={styles.modalBtn}
                   onPress={() => handleClose("RETURNED")}

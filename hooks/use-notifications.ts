@@ -1,8 +1,8 @@
 import { authService } from "@/api/services/auth";
 import messaging from "@react-native-firebase/messaging";
 import { useEffect } from "react";
-import { PermissionsAndroid, Platform } from "react-native";
-import notifee from '@notifee/react-native';
+import { Platform } from "react-native";
+import notifee, { AuthorizationStatus } from '@notifee/react-native';
 import { TokenCallback } from "@/utils/notifications/types";
 import { displayNotification } from "@/utils/notifications/display";
 import { notificationEventHandler } from "@/utils/notifications/handlers";
@@ -43,13 +43,8 @@ const requestNotificationPermission = async () => {
             authStatus === messaging.AuthorizationStatus.PROVISIONAL
         );
     } else if (Platform.OS === "android") {
-        if (Platform.Version >= 33) {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-            );
-            return granted === PermissionsAndroid.RESULTS.GRANTED;
-        }
-        return true;
+        const settings = await notifee.requestPermission();
+        return settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED;
     }
     return false;
 };

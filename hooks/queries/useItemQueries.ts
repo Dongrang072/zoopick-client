@@ -32,4 +32,12 @@ export const useItemQueries = {
             enabled: !!id,
         });
     },
+
+    useItemDetailByItemId: (itemId: number | string) => {
+        return useQuery({
+            queryKey: ["itemDetail", itemId],
+            queryFn: () => itemService.getItemPostByItemId(itemId),
+            enabled: !!itemId,
+        })
+    }
 };

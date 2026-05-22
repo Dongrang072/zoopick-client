@@ -202,6 +202,7 @@ export interface CreateItemRequest {
 
 export interface CreateItemResponse {
   item_post_id: number;
+  item_id: number;
   message: string;
   item_status: string;
 }

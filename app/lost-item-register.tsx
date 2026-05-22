@@ -271,7 +271,7 @@ export default function LostItemRegister() {
                 },
                 {
                     onSuccess: (result) => {
-                        const itemId = result.data?.item_post_id;
+                        const itemId = result.data?.item_id;
                         if (deliveryChoice === "locker") {
                             if (!itemId) {
                                 Alert.alert(

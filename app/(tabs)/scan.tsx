@@ -209,7 +209,10 @@ export default function QRScanScreen() {
     setModalType(null);
     setLockerId(null);
     if (itemIdParam) {
-      router.replace(`${ROUTES.LOST_ITEM_DETAIL}?id=${itemIdParam}` as any);
+      router.replace({
+          pathname: ROUTES.LOST_ITEM_DETAIL,
+          params: { itemId: itemIdParam }
+      });
     }
   };
 

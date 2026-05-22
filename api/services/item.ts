@@ -8,6 +8,7 @@ import {
     ItemPost,
 } from "../types";
 import {
+    ITEM_BY_ITEM_ID,
     ITEMS_CREATE_URL,
     ITEMS_DETAIL_URL,
     ITEMS_LIST_URL,
@@ -26,6 +27,13 @@ export const itemService = {
     getItemPost: async (id: number | string) => {
         const response = await axiosInstance.get<ApiResponse<ItemPost>>(
             `${ITEMS_LIST_URL}/${id}`, // Swagger docs: /api/items/post/list/{id}
+        );
+        return response.data;
+    },
+
+    getItemPostByItemId: async (itemId: number | string) => {
+        const response = await axiosInstance.get<ApiResponse<ItemPost>>(
+            `${ITEM_BY_ITEM_ID}/${itemId}`, // Swagger docs: /api/items/post/by-item/{itemId}
         );
         return response.data;
     },

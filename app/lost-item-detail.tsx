@@ -52,10 +52,13 @@ function formatDateTime(dateStr: string) {
 export default function LostItemDetail() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id: itemPostId, itemId } = useLocalSearchParams<{ id?: string, itemId?: string }>();
+  const id = itemPostId ? itemPostId : itemId;
+  const itemDetailQuery = itemPostId ? useItemQueries.useItemDetail : useItemQueries.useItemDetailByItemId;
+  
   const [showImageModal, setShowImageModal] = useState(false);
 
-  const { data: response, isLoading } = useItemQueries.useItemDetail(id!);
+  const { data: response, isLoading } = itemDetailQuery(id!);
   const createChatRoomMutation = useChatMutations.useCreateChatRoom();
   const { data: buildingsRes } = useMetadataQueries.useBuildings();
   const apiBuildings = buildingsRes?.data?.data ?? [];
