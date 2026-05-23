@@ -327,18 +327,13 @@ export default function ChatRoomScreen() {
     sendMessageMutation,
   ]);
 
-  const handleOpenLocker = useCallback(
-    () => {
-      setShowCloseModal(false);
-      const itemId = chatRoom?.item_id;
-      if (itemId) {
-        router.replace({
-          pathname: ROUTES.SCAN,
-          params: { itemId: itemId }
-        });
-      }
-    }, []
-  );
+  const handleOpenLocker = useCallback(() => {
+    setShowCloseModal(false);
+    const itemId = chatRoom?.item_id;
+    if (itemId) {
+      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId } });
+    }
+  }, [chatRoom]);
 
   const handleClose = useCallback(
     (reason: "RETURNED" | "ABANDONED", navigateToScan = false) => {
@@ -380,7 +375,7 @@ export default function ChatRoomScreen() {
         },
       });
     },
-    [closeChatRoomMutation],
+    [closeChatRoomMutation, chatRoom],
   );
 
   const handleReopen = useCallback(() => {
