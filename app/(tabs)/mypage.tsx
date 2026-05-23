@@ -100,7 +100,7 @@ export default function MyPageScreen() {
         </Text>
         <TouchableOpacity className="relative p-2" onPress={() => router.push(ROUTES.NOTIFICATION as any)}>
           <Bell size={24} color="#1F2937" />
-          {profile && profile.unreadCount > 0 && (
+          {profile && profile.unreadNotificationCount > 0 && (
             <View className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
           )}
         </TouchableOpacity>
@@ -151,7 +151,7 @@ export default function MyPageScreen() {
           {[
             { label: "주은 물품", value: profile?.postCount ?? 0 },
             { label: "채팅방 수", value: profile?.chatRoomCount ?? 0 },
-            { label: "읽지 않은 알림", value: profile?.unreadCount ?? 0 },
+            { label: "읽지 않은 알림", value: profile?.unreadNotificationCount ?? 0 },
           ].map((stat, idx) => (
             <View
               key={stat.label}

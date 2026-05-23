@@ -11,6 +11,7 @@ import { BASE_URL } from "@/constants/url";
 import { useChatMutations } from "@/hooks/mutations/useChatMutations";
 import { useItemQueries } from "@/hooks/queries/useItemQueries";
 import { useMetadataQueries } from "@/hooks/queries/useMetadataQueries";
+import { useProfile } from "@/hooks/queries/useUserQueries";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   AlertTriangle,
@@ -59,6 +60,7 @@ export default function LostItemDetail() {
   const [showImageModal, setShowImageModal] = useState(false);
 
   const { data: response, isLoading } = itemDetailQuery(id!);
+  const { data: profile } = useProfile();
   const createChatRoomMutation = useChatMutations.useCreateChatRoom();
   const { data: buildingsRes } = useMetadataQueries.useBuildings();
   const apiBuildings = buildingsRes?.data?.data ?? [];
@@ -71,40 +73,24 @@ export default function LostItemDetail() {
       : `${BASE_URL}${itemPost.image_url}`
     : null;
 
-  // 채팅 버튼 클릭 핸들러 (테스트용 ID 하드코딩)
   const handleChatPress = useCallback(() => {
     if (!itemPost) return;
-
-    console.log("reporter_id:", itemPost.reporter_id); // 추가!
-    console.log("=== 채팅 생성 테스트 시작 ===");
-    console.log("아이템 ID:", itemPost.item_id);
-
     createChatRoomMutation.mutate(
       {
         item_id: itemPost.item_id,
-        // 테스트를 위해 에뮬레이터 계정 ID를 1로 가정하고 하드코딩합니다.
-        //counterpart_id: 1,
-        // reporter_id 추가되면
         counterpart_id: itemPost.reporter_id ?? 0,
       },
       {
         onSuccess: (res) => {
-          console.log("채팅방 생성 성공:", JSON.stringify(res, null, 2)); // 이걸로 교체
           if (res.success && res.data.room_data) {
-            console.log("ROOM ID:", res.data.room_data.room_id); // 이것도 추가
-            // Expo Router 타입 시스템에 맞춘 안전한 이동 방식
             router.push({
               pathname: "/chat-room",
               params: { roomId: res.data.room_data.room_id },
             });
           }
         },
-        onError: (error) => {
-          console.error("채팅방 생성 실패:", error);
-          Alert.alert(
-            "알림",
-            "채팅방을 연결할 수 없습니다. 서버 로그를 확인하세요.",
-          );
+        onError: () => {
+          Alert.alert("알림", "채팅방을 열 수 없어요. 잠시 후 다시 시도해주세요.");
         },
       },
     );
@@ -124,22 +110,6 @@ export default function LostItemDetail() {
     } catch {
       Alert.alert("공유 실패");
     }
-  };
-
-  const handleMatchRequest = () => {
-    Alert.alert(
-      "매칭 요청",
-      "이 물건이 내 물건이 맞나요?\n요청 후 상대방과 채팅으로 확인할 수 있어요.",
-      [
-        { text: "취소", style: "cancel" },
-        {
-          text: "맞아요!",
-          onPress: () => {
-            Alert.alert("요청 완료", "매칭 요청을 보냈어요!");
-          },
-        },
-      ],
-    );
   };
 
   if (isLoading) {
@@ -181,6 +151,7 @@ export default function LostItemDetail() {
   const korCategory = CATEGORY_MAP[itemPost.category] ?? "기타";
   const IconComponent = CATEGORY_ICON_MAP[itemPost.category] ?? Package;
   const isTheftConfirmed = itemPost.status === "THEFT_CONFIRMED";
+  const isMyPost = !!profile && itemPost.reporter_id === profile.userId;
   const statusStyle = (isTheftConfirmed
     ? ITEM_STATUS_STYLE.THEFT_CONFIRMED
     : ITEM_STATUS_STYLE[itemPost.type]) ?? { bg: "#f3f4f6", text: "#888" };
@@ -312,32 +283,28 @@ export default function LostItemDetail() {
       </ScrollView>
 
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 8 }]}>
-        {itemPost.type === "FOUND" && !isTheftConfirmed && (
+        {!isMyPost && (
           <TouchableOpacity
-            style={styles.matchBtn}
-            onPress={handleMatchRequest}
-            activeOpacity={0.85}
+            style={[
+              styles.chatBtn,
+              isTheftConfirmed && styles.chatBtnDisabled,
+            ]}
+            onPress={isTheftConfirmed ? undefined : handleChatPress}
+            activeOpacity={isTheftConfirmed ? 1 : 0.85}
+            disabled={createChatRoomMutation.isPending || isTheftConfirmed}
           >
-            <Text style={styles.matchBtnText}>이 물건 내 거예요</Text>
+            {createChatRoomMutation.isPending ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              <>
+                <MessageCircle size={18} color="#fff" />
+                <Text style={styles.chatBtnText}>
+                  {isTheftConfirmed ? "도난 확정 처리됨" : "채팅으로 문의하기"}
+                </Text>
+              </>
+            )}
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          style={[styles.chatBtn, isTheftConfirmed && styles.chatBtnDisabled]}
-          onPress={isTheftConfirmed ? undefined : handleChatPress}
-          activeOpacity={isTheftConfirmed ? 1 : 0.85}
-          disabled={createChatRoomMutation.isPending || isTheftConfirmed}
-        >
-          {createChatRoomMutation.isPending ? (
-            <ActivityIndicator color="#fff" size="small" />
-          ) : (
-            <>
-              <MessageCircle size={18} color="#fff" />
-              <Text style={styles.chatBtnText}>
-                {isTheftConfirmed ? "도난 확정 처리됨" : "채팅으로 문의하기"}
-              </Text>
-            </>
-          )}
-        </TouchableOpacity>
         <TouchableOpacity
           style={styles.shareBtn}
           onPress={handleShare}
