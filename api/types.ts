@@ -53,11 +53,12 @@ export interface DeviceTokenRequest {
 
 // User Profile Types
 export interface UserProfile {
+  userId: number;
   nickname: string;
   department: string;
   postCount: number;
   chatRoomCount: number;
-  unreadCount: number;
+  unreadNotificationCount: number;
 }
 
 export interface ScanOwnerResult {

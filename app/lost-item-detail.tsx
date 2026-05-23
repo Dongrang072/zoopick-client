@@ -11,6 +11,7 @@ import { BASE_URL } from "@/constants/url";
 import { useChatMutations } from "@/hooks/mutations/useChatMutations";
 import { useItemQueries } from "@/hooks/queries/useItemQueries";
 import { useMetadataQueries } from "@/hooks/queries/useMetadataQueries";
+import { useProfile } from "@/hooks/queries/useUserQueries";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   AlertTriangle,
@@ -59,6 +60,7 @@ export default function LostItemDetail() {
   const [showImageModal, setShowImageModal] = useState(false);
 
   const { data: response, isLoading } = itemDetailQuery(id!);
+  const { data: profile } = useProfile();
   const createChatRoomMutation = useChatMutations.useCreateChatRoom();
   const { data: buildingsRes } = useMetadataQueries.useBuildings();
   const apiBuildings = buildingsRes?.data?.data ?? [];
