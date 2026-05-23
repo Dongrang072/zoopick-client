@@ -248,8 +248,8 @@ export default function ChatRoomScreen() {
   const closeChatRoomMutation = useChatMutations.useCloseChatRoom(roomIdNum);
   const reopenChatRoomMutation = useChatMutations.useReopenChatRoom(roomIdNum);
 
-  const isOwnerQrScanned = roomData?.data.item_name === "";
   const chatRoom = roomData?.success ? roomData.data : null;
+  const itemStatus = chatRoom?.item_status ?? null;
   const isOwner = profile?.nickname === chatRoom?.owner_nickname;
   const counterpartNickname = isOwner
     ? chatRoom?.finder_nickname
@@ -327,18 +327,13 @@ export default function ChatRoomScreen() {
     sendMessageMutation,
   ]);
 
-  const handleOpenLocker = useCallback(
-    () => {
-      setShowCloseModal(false);
-      const itemId = chatRoom?.item_id;
-      if (itemId) {
-        router.replace({
-          pathname: ROUTES.SCAN,
-          params: { itemId: itemId }
-        });
-      }
-    }, []
-  );
+  const handleOpenLocker = useCallback(() => {
+    setShowCloseModal(false);
+    const itemId = chatRoom?.item_id;
+    if (itemId) {
+      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId } });
+    }
+  }, [chatRoom]);
 
   const handleClose = useCallback(
     (reason: "RETURNED" | "ABANDONED", navigateToScan = false) => {
@@ -380,7 +375,7 @@ export default function ChatRoomScreen() {
         },
       });
     },
-    [closeChatRoomMutation],
+    [closeChatRoomMutation, chatRoom],
   );
 
   const handleReopen = useCallback(() => {
@@ -602,33 +597,32 @@ export default function ChatRoomScreen() {
             <Text style={styles.modalDesc}>거래를 어떻게 종료할까요?</Text>
             {isOwner ? (
               <>
-              {isOwnerQrScanned ? (<></>) : (
-                <TouchableOpacity
-                  style={styles.modalBtn}
-                  onPress={() => handleClose("RETURNED", true)}
-                >
-                  <Text style={styles.modalBtnText}>📦 사물함에서 물건을 꺼낼게요</Text>
-                </TouchableOpacity>
-              )
-              }
-                <TouchableOpacity
-                  style={styles.modalBtn}
-                  onPress={() => handleClose("RETURNED", false)}
-                >
-                  <Text style={styles.modalBtnText}>🤝 직접 물건을 받았어요</Text>
-                </TouchableOpacity>
+                {itemStatus === "IN_LOCKER" ? (
+                  <TouchableOpacity
+                    style={styles.modalBtn}
+                    onPress={() => handleClose("RETURNED", true)}
+                  >
+                    <Text style={styles.modalBtnText}>📦 사물함에서 물건을 꺼낼게요</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.modalBtn}
+                    onPress={() => handleClose("RETURNED", false)}
+                  >
+                    <Text style={styles.modalBtnText}>🤝 직접 물건을 받았어요</Text>
+                  </TouchableOpacity>
+                )}
               </>
             ) : (
               <>
-              {isOwnerQrScanned ? (<></>) : (
-                <TouchableOpacity
-                  style={styles.modalBtn}
-                  onPress={() => handleOpenLocker()}
-                >
-                  <Text style={styles.modalBtnText}>📦 사물함에 물건을 넣을게요</Text>
-                </TouchableOpacity>
-              )
-              }
+                {itemStatus === "REPORTED" && (
+                  <TouchableOpacity
+                    style={styles.modalBtn}
+                    onPress={handleOpenLocker}
+                  >
+                    <Text style={styles.modalBtnText}>📦 사물함에 물건을 넣을게요</Text>
+                  </TouchableOpacity>
+                )}
                 <TouchableOpacity
                   style={styles.modalBtn}
                   onPress={() => handleClose("RETURNED")}
