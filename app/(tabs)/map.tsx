@@ -11,8 +11,8 @@ import { useItemQueries } from "@/hooks/queries/useItemQueries";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
+import NotificationBell from "@/components/NotificationBell";
 import {
-  Bell,
   ChevronRight,
   Crosshair,
   Package,
@@ -271,9 +271,7 @@ export default function MapScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <Text style={styles.headerTitle}>캠퍼스 지도</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => router.push(ROUTES.NOTIFICATION)}>
-            <Bell size={20} color="#444" />
-          </TouchableOpacity>
+          <NotificationBell />
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => router.push(ROUTES.MYPAGE)}
