@@ -226,6 +226,7 @@ export interface ChatRoomRecord {
   finder_nickname: string;
   item_name: string;
   item_id: number;
+  item_status: ItemStatus | null;
 }
 
 export interface MessageRecord {

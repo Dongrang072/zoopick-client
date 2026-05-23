@@ -248,7 +248,7 @@ export default function ChatRoomScreen() {
   const closeChatRoomMutation = useChatMutations.useCloseChatRoom(roomIdNum);
   const reopenChatRoomMutation = useChatMutations.useReopenChatRoom(roomIdNum);
 
-  const isOwnerQrScanned = roomData?.data.item_name === "";
+  const itemStatus = chatRoom?.item_status ?? null;
   const chatRoom = roomData?.success ? roomData.data : null;
   const isOwner = profile?.nickname === chatRoom?.owner_nickname;
   const counterpartNickname = isOwner
