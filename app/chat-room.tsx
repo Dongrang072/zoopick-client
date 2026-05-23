@@ -597,20 +597,21 @@ export default function ChatRoomScreen() {
             <Text style={styles.modalDesc}>거래를 어떻게 종료할까요?</Text>
             {isOwner ? (
               <>
-                {itemStatus === "IN_LOCKER" && (
+                {itemStatus === "IN_LOCKER" ? (
                   <TouchableOpacity
                     style={styles.modalBtn}
                     onPress={() => handleClose("RETURNED", true)}
                   >
                     <Text style={styles.modalBtnText}>📦 사물함에서 물건을 꺼낼게요</Text>
                   </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.modalBtn}
+                    onPress={() => handleClose("RETURNED", false)}
+                  >
+                    <Text style={styles.modalBtnText}>🤝 직접 물건을 받았어요</Text>
+                  </TouchableOpacity>
                 )}
-                <TouchableOpacity
-                  style={styles.modalBtn}
-                  onPress={() => handleClose("RETURNED", false)}
-                >
-                  <Text style={styles.modalBtnText}>🤝 직접 물건을 받았어요</Text>
-                </TouchableOpacity>
               </>
             ) : (
               <>
