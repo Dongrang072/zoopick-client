@@ -89,6 +89,7 @@ function timeAgo(dateStr: string) {
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [notifications, setNotifications] = useState<NotificationRecord[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -129,6 +130,7 @@ export default function NotificationsScreen() {
       setNotifications((prev) =>
         prev.map((n) => ({ ...n, read_at: new Date().toISOString() })),
       );
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     } catch (e) {
       console.error("알림 읽음 처리 실패", e);
     }
@@ -143,6 +145,7 @@ export default function NotificationsScreen() {
             n.id === item.id ? { ...n, read_at: new Date().toISOString() } : n,
           ),
         );
+        queryClient.invalidateQueries({ queryKey: ["userProfile"] });
       }
     } catch (e) {
       console.error("알림 읽음 처리 실패", e);
