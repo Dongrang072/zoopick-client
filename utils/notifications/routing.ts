@@ -11,6 +11,10 @@ const ROUTING_REGISTRY: Record<string, (data: NotificationData) => Href> = {
         pathname: ROUTES.CHAT,
         params: {}
     }),
+    ITEM_REPORTED: (data) => ({
+        pathname: ROUTES.LOST_ITEM_DETAIL,
+        params: { id: data.item_post_id }
+    }),
     MATCH_FOUND: () => ({
         pathname: ROUTES.MATCHES,
         params: {}

@@ -44,8 +44,16 @@ const createChatNotification = async (message: ZoopickRemoteMessage) => {
     ]);
 }
 
+const createItemReportedNotification = async (message: ZoopickRemoteMessage) => {
+    if (message.data && message.data.item_name)
+        message.data.body += ` (${message.data.item_name})`;
+    
+    createNotification(message);
+}
+
 const NOTIFICATION_DISPLAY_REGISTRY: Record<string, (message: ZoopickRemoteMessage) => void> = {
     CHAT_MESSAGE: createChatNotification,
+    ITEM_REPORTED: createItemReportedNotification
 }
 
 export const displayNotification = async (message: ZoopickRemoteMessage) => {
