@@ -12,8 +12,8 @@ import { BASE_URL, ROUTES } from "@/constants/url";
 import { useItemQueries } from "@/hooks/queries/useItemQueries";
 import { useMetadataQueries } from "@/hooks/queries/useMetadataQueries";
 import { useRouter } from "expo-router";
+import NotificationBell from "@/components/NotificationBell";
 import {
-  Bell,
   ChevronDown,
   MapPin,
   Package,
@@ -150,9 +150,7 @@ export default function LostItemBoard() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>분실물 게시판</Text>
           <View style={styles.headerIcons}>
-            <TouchableOpacity style={styles.iconBtn} onPress={() => router.push(ROUTES.NOTIFICATION)}>
-              <Bell size={20} color="#444" />
-            </TouchableOpacity>
+            <NotificationBell />
             <TouchableOpacity
               style={styles.iconBtn}
               onPress={() => router.push(ROUTES.MYPAGE)}

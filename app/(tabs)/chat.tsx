@@ -5,7 +5,8 @@ import { ROUTES } from "@/constants/url";
 import { useChatQueries } from "@/hooks/queries/useChatQueries";
 import { useProfile } from "@/hooks/queries/useUserQueries";
 import { useFocusEffect, useRouter } from "expo-router";
-import { Bell, MessageCircle, User } from "lucide-react-native";
+import NotificationBell from "@/components/NotificationBell";
+import { MessageCircle, User } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   FlatList,
@@ -105,12 +106,7 @@ export default function ChatScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>채팅</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity
-            style={styles.iconBtn}
-            onPress={() => router.push(ROUTES.NOTIFICATION)}
-          >
-            <Bell size={20} color="#444" />
-          </TouchableOpacity>
+          <NotificationBell />
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => router.push(ROUTES.MYPAGE as any)}

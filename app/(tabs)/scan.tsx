@@ -8,9 +8,9 @@ import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import NotificationBell from "@/components/NotificationBell";
 import {
   Archive,
-  Bell,
   Image as ImageIcon,
   MessageCircle,
   QrCode,
@@ -257,12 +257,7 @@ export default function QRScanScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <Text style={styles.headerTitle}>QR 스캔</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity
-            style={styles.iconBtn}
-            onPress={() => router.push(ROUTES.NOTIFICATION)}
-          >
-            <Bell size={20} color="#444" />
-          </TouchableOpacity>
+          <NotificationBell />
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => router.push("/(tabs)/mypage" as any)}
