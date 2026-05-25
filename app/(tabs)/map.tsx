@@ -44,6 +44,7 @@ type ApiItem = {
   building_id: number;
   data_address?: string;
   created_at: string;
+  reported_at: string;
   image_url?: string;
 };
 
@@ -415,7 +416,7 @@ export default function MapScreen() {
                             `${buildingName} ${item.data_address ?? ""}`}
                         </Text>
                         <Text style={styles.itemMeta}>
-                          {timeAgo(item.created_at)}
+                          {timeAgo(item.reported_at)}
                         </Text>
                       </View>
                       <View style={styles.itemRight}>
