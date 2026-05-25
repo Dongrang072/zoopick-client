@@ -272,6 +272,7 @@ export default function LostItemRegister() {
                 {
                     onSuccess: (result) => {
                         const itemId = result.data?.item_id;
+                        const itemPostId = result.data?.item_post_id;
                         if (deliveryChoice === "locker") {
                             if (!itemId) {
                                 Alert.alert(
@@ -283,7 +284,7 @@ export default function LostItemRegister() {
                             }
                             router.push(`${ROUTES.SCAN}?itemId=${itemId}` as any);
                         } else {
-                            if (itemId) router.replace(`${ROUTES.LOST_ITEM_DETAIL}?id=${itemId}`);
+                            if (itemId) router.replace(`${ROUTES.LOST_ITEM_DETAIL}?id=${itemPostId}`);
                             else router.back();
                         }
                     },
