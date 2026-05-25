@@ -358,8 +358,8 @@ export default function ChatRoomScreen() {
               type: "success",
               text1:
                 reason === "RETURNED"
-                  ? "거래가 완료되었어요"
-                  : "거래가 종료되었어요",
+                  ? "반환이 완료되었어요"
+                  : "연결이 종료되었어요",
               position: "bottom",
               visibilityTime: 2500,
             });
@@ -371,7 +371,7 @@ export default function ChatRoomScreen() {
         onError: () => {
           Toast.show({
             type: "error",
-            text1: "거래 종료 실패",
+            text1: "종료 처리 실패",
             text2: "다시 시도해주세요.",
             position: "bottom",
             visibilityTime: 2500,
@@ -498,7 +498,7 @@ export default function ChatRoomScreen() {
               if (!isOwner && itemStatus === "IN_LOCKER") {
                 Alert.alert(
                   "보관 중",
-                  "물건이 사물함에 보관 중입니다.\n분실자가 수령하면 거래가 완료돼요.",
+                  "물건이 사물함에 보관 중입니다.\n분실자가 물건을 찾아가면 마무리돼요.",
                 );
                 return;
               }
@@ -537,8 +537,8 @@ export default function ChatRoomScreen() {
         <View style={styles.closedBanner}>
           <Text style={styles.closedText}>
             {chatRoom?.status === "RESOLVED_RETURNED"
-              ? isOwner ? "반환 완료된 거래입니다" : "양도 완료된 거래입니다"
-              : "종료된 거래입니다"}
+              ? isOwner ? "반환이 완료된 채팅입니다" : "양도가 완료된 채팅입니다"
+              : "종료된 채팅입니다"}
           </Text>
         </View>
       )}
@@ -577,7 +577,7 @@ export default function ChatRoomScreen() {
           <TextInput
             style={[styles.input, isClosed && styles.inputDisabled]}
             placeholder={
-              isClosed ? "종료된 거래입니다" : "메시지를 입력하세요..."
+              isClosed ? "종료된 채팅입니다" : "메시지를 입력하세요..."
             }
             placeholderTextColor="#bbb"
             value={inputText}
