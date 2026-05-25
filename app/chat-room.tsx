@@ -606,8 +606,7 @@ export default function ChatRoomScreen() {
         />
         <View style={styles.modalWrap}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>거래 종료</Text>
-            <Text style={styles.modalDesc}>거래를 어떻게 종료할까요?</Text>
+            <Text style={styles.modalTitle}>마무리 방법 선택</Text>
             {isOwner ? (
               <>
                 {itemStatus === "IN_LOCKER" ? (
@@ -651,7 +650,7 @@ export default function ChatRoomScreen() {
               onPress={() => handleClose("ABANDONED")}
             >
               <Text style={[styles.modalBtnText, styles.modalBtnTextGray]}>
-                거래를 포기할게요
+                그냥 포기할게요
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
