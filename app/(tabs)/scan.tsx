@@ -204,6 +204,9 @@ export default function QRScanScreen() {
           pathname: ROUTES.LOST_ITEM_DETAIL,
           params: { itemId: itemIdParam }
       });
+    } else {
+      setLockerReady(false);
+      router.navigate("/(tabs)/lost-item" as any);
     }
   };
 
@@ -261,7 +264,9 @@ export default function QRScanScreen() {
       {/* 바디 */}
       <View style={styles.body}>
         <Text style={styles.guideText}>
-          사물함 QR을 스캔하여 물건을 회수하세요
+          {itemIdParam
+            ? "사물함 QR을 스캔하여 물건을 보관하세요"
+            : "사물함 QR을 스캔하여 물건을 회수하세요"}
         </Text>
         <View style={styles.frameWrap}>
           <View style={styles.frame}>
