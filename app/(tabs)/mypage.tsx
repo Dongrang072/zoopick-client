@@ -12,9 +12,7 @@ import {
   Lock,
   LogOut,
   MessageCircle,
-  Package,
   Pencil,
-  QrCode,
   ShieldCheck,
   TrendingUp,
   User,
@@ -59,29 +57,6 @@ export default function MyPageScreen() {
       },
     ]);
   };
-
-  const quickMenus = [
-    {
-      label: "AI 매칭 내역",
-      icon: TrendingUp,
-      action: () => router.push(ROUTES.MATCHES),
-    },
-    {
-      label: "주은 물품 목록",
-      icon: Package,
-      action: () => router.push(ROUTES.LOST_ITEM_BOARD),
-    },
-    {
-      label: "채팅 목록",
-      icon: MessageCircle,
-      action: () => router.push(ROUTES.CHAT),
-    },
-    {
-      label: "스캔 내역",
-      icon: QrCode,
-      action: () => router.push(ROUTES.SCAN),
-    },
-  ];
 
   if (isLoading) {
     return (
@@ -224,29 +199,6 @@ export default function MyPageScreen() {
               </Text>
             </View>
           </TouchableOpacity>
-        </View>
-
-        {/* Quick Menus */}
-        <View className="mt-4 mx-4 bg-white rounded-3xl p-5 border border-gray-100 shadow-sm">
-          <Text className="text-sm font-pretendard-bold text-gray-800 mb-4">
-            빠른 메뉴
-          </Text>
-          <View className="flex-row flex-wrap justify-between">
-            {quickMenus.map((menu) => (
-              <TouchableOpacity
-                key={menu.label}
-                onPress={menu.action}
-                className="w-[48%] bg-gray-50 rounded-2xl p-4 flex-row items-center mb-3 border border-gray-100"
-              >
-                <View className="w-8 h-8 rounded-full bg-white items-center justify-center mr-3 shadow-sm">
-                  <menu.icon size={16} color="#4F6EF7" />
-                </View>
-                <Text className="text-xs font-pretendard-semibold text-gray-700">
-                  {menu.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
         </View>
 
         {/* Settings Section */}

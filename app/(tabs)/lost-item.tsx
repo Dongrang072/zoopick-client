@@ -386,7 +386,7 @@ export default function LostItemBoard() {
                       </Text>
                     </View>
                     <Text style={styles.itemTime}>
-                      {timeAgo(item.created_at)}
+                      {(item.type === "FOUND" ? "발견 " : "분실 ") + timeAgo(item.reported_at)} · 게시 {timeAgo(item.created_at)}
                     </Text>
                   </View>
                   <View style={styles.itemRight}>
