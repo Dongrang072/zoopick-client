@@ -492,7 +492,7 @@ export default function ChatRoomScreen() {
             style={styles.completeBtn}
             onPress={() => setShowCloseModal(true)}
           >
-            <Text style={styles.completeBtnText}>거래 완료</Text>
+            <Text style={styles.completeBtnText}>{isOwner ? "반환 완료" : "양도 완료"}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.reopenBtn} onPress={handleReopen}>
@@ -524,7 +524,7 @@ export default function ChatRoomScreen() {
         <View style={styles.closedBanner}>
           <Text style={styles.closedText}>
             {chatRoom?.status === "RESOLVED_RETURNED"
-              ? "반환 완료된 거래입니다"
+              ? isOwner ? "반환 완료된 거래입니다" : "양도 완료된 거래입니다"
               : "종료된 거래입니다"}
           </Text>
         </View>
