@@ -216,6 +216,7 @@ export default function LostItemDetail() {
           </View>
 
           <Text style={styles.title}>{itemPost.title ?? "제목 없음"}</Text>
+          <Text style={styles.nickname}>작성자: {itemPost.nickname}</Text>
 
           <View style={styles.locationCard}>
             <View style={styles.locationIconWrap}>
@@ -232,7 +233,7 @@ export default function LostItemDetail() {
                 {itemPost.type === "FOUND" ? "습득" : "분실"}
               </Text>
               <Text style={styles.locationTime}>
-                {formatDateTime(itemPost.created_at)}
+                {formatDateTime(itemPost.reported_at)}
               </Text>
             </View>
           </View>
@@ -392,8 +393,14 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontFamily: fonts.bold,
     color: "#111",
-    marginBottom: 16,
+    marginBottom: 6,
     lineHeight: 30,
+  },
+  nickname: {
+    fontSize: 13,
+    fontFamily: fonts.regular,
+    color: "#888",
+    marginBottom: 12,
   },
   locationCard: {
     flexDirection: "row",
