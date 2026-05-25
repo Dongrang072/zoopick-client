@@ -1,6 +1,10 @@
 import { lockerService } from "@/api/services/locker";
 import { userService } from "@/api/services/user";
-import { ApiResponse, CreateChatRoomResult, ScanOwnerResult } from "@/api/types";
+import {
+  ApiResponse,
+  CreateChatRoomResult,
+  ScanOwnerResult,
+} from "@/api/types";
 import { fonts } from "@/constants/typography";
 import { ROUTES } from "@/constants/url";
 import { useChatMutations } from "@/hooks/mutations/useChatMutations";
@@ -51,7 +55,8 @@ export default function QRScanScreen() {
   const [lockerReady, setLockerReady] = useState(false);
   const isProcessing = useRef(false);
 
-  const createChatRoomByOwnerMutation = useChatMutations.useCreateChatRoomByOwner();
+  const createChatRoomByOwnerMutation =
+    useChatMutations.useCreateChatRoomByOwner();
 
   useEffect(() => {
     if (modalType !== "locker_success") return;
@@ -93,7 +98,10 @@ export default function QRScanScreen() {
         setLockerId(id);
 
         try {
-          await lockerService.unlock(id, itemIdParam ? Number(itemIdParam) : undefined);
+          await lockerService.unlock(
+            id,
+            itemIdParam ? Number(itemIdParam) : undefined,
+          );
           setModalType("locker_success");
         } catch (e: any) {
           if (e.response?.status === 403) {
@@ -106,14 +114,15 @@ export default function QRScanScreen() {
         }
         return;
       }
-      const userMatch = data.match(/\/scan\/owner\/(\d+)/)
+      const userMatch = data.match(/\/scan\/owner\/(\d+)/);
       if (userMatch) {
-        const response: ApiResponse<ScanOwnerResult> = await userService.scanQrCode(data);
+        const response: ApiResponse<ScanOwnerResult> =
+          await userService.scanQrCode(data);
         setOwnerInfo({
           ownerId: response.data.owner_id,
           nickname: response.data.nickname,
         });
-        setModalType('owner');
+        setModalType("owner");
         return;
       }
 
@@ -124,7 +133,10 @@ export default function QRScanScreen() {
       if (parsed.type === "locker" && parsed.lockerId) {
         setLockerId(parsed.lockerId);
         try {
-          await lockerService.unlock(parsed.lockerId, parsed.itemId ?? undefined);
+          await lockerService.unlock(
+            parsed.lockerId,
+            parsed.itemId ?? undefined,
+          );
           setModalType("locker_success");
         } catch (e: any) {
           if (e.response?.status === 403) {
@@ -157,44 +169,23 @@ export default function QRScanScreen() {
     Alert.alert("준비중", "갤러리 QR 인식은 준비중이에요.");
   };
 
-  const handleTestModal = () => {
-    Alert.alert("테스트", "어떤 모달 볼까요?", [
-      {
-        text: "ownerQR",
-        onPress: () => {
-          setOwnerInfo({
-            nickname: "김민준",
-            ownerId: 1
-          });
-          setModalType("owner");
-        },
-      },
-      {
-        text: "보관완료",
-        onPress: () => {
-          setLockerId(1);
-          setModalType("locker_success");
-        },
-      },
-      { text: "권한없음", onPress: () => setModalType("locker_fail") },
-      { text: "취소", style: "cancel" },
-    ]);
-  };
-
   const handleChat = async () => {
     setModalType(null);
     if (ownerInfo) {
-      createChatRoomByOwnerMutation.mutate({
-        owner_id: ownerInfo.ownerId
-      }, {
-        onSuccess: (response: ApiResponse<CreateChatRoomResult>) => {
-          const roomId: number = response.data.room_data.room_id;
-          router.push({
-            pathname: ROUTES.CHAT_ROOM,
-            params: { roomId }
-          });
-        }
-      });
+      createChatRoomByOwnerMutation.mutate(
+        {
+          owner_id: ownerInfo.ownerId,
+        },
+        {
+          onSuccess: (response: ApiResponse<CreateChatRoomResult>) => {
+            const roomId: number = response.data.room_data.room_id;
+            router.push({
+              pathname: ROUTES.CHAT_ROOM,
+              params: { roomId },
+            });
+          },
+        },
+      );
     }
   };
 
@@ -312,14 +303,6 @@ export default function QRScanScreen() {
           <ImageIcon size={18} color="#555" />
           <Text style={styles.galleryBtnText}>갤러리에서 QR 불러오기</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.testBtn}
-          onPress={handleTestModal}
-          activeOpacity={0.85}
-        >
-          <Text style={styles.testBtnText}>🧪 모달 테스트</Text>
-        </TouchableOpacity>
       </View>
 
       {/* ownerQR 모달 */}
@@ -368,10 +351,7 @@ export default function QRScanScreen() {
         transparent
         animationType="fade"
       >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => {}}
-        />
+        <Pressable style={styles.modalOverlay} onPress={() => {}} />
         <View style={styles.modalWrap}>
           <View style={styles.modalCard}>
             <View style={styles.successIconWrap}>
@@ -397,7 +377,9 @@ export default function QRScanScreen() {
               >
                 <Text style={styles.lockerCloseBtnText}>
                   {lockerReady
-                    ? (itemIdParam ? "넣었어요, 닫기" : "꺼냈어요, 닫기")
+                    ? itemIdParam
+                      ? "넣었어요, 닫기"
+                      : "꺼냈어요, 닫기"
                     : "사물함 열리는 중..."}
                 </Text>
               </LinearGradient>
@@ -697,12 +679,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f6f8",
   },
   closeTextBtnText: { fontSize: 15, fontFamily: fonts.regular, color: "#555" },
-  testBtn: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 40,
-    borderRadius: 14,
-    backgroundColor: "#f3f4f6",
-  },
-  testBtnText: { fontSize: 13, fontFamily: fonts.regular, color: "#aaa" },
 });

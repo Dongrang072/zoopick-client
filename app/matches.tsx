@@ -176,6 +176,41 @@ export default function MatchesScreen() {
 
   const matches = data?.success ? data.data : [];
 
+  /*
+  // ⚠️ 임시 테스트용 mock (검증 후 반드시 삭제!)
+  const USE_MOCK = true;
+  const mockMatches: ItemMatchResultResponse[] = [
+    {
+      match_id: 999,
+      status: "CANDIDATE",
+      score: 0.92,
+      found_item_id: 52,
+      found_post_id: 45,
+      found_post_title: "파란 물병 주웠어요",
+      found_image_url: "",
+      location_name: "제1공학관 Y5441",
+      found_nickname: "테스트유저",
+      found_department: "컴퓨터공학과",
+      counterpart_id: 7,
+    },
+    {
+      match_id: 998,
+      status: "CANDIDATE",
+      score: 0.78,
+      found_item_id: 51,
+      found_post_id: 44,
+      found_post_title: "검정 텀블러 발견",
+      found_image_url: "",
+      location_name: "제2공학관",
+      found_nickname: "신성민",
+      found_department: "산업경영공학과",
+      counterpart_id: 8,
+    },
+  ];
+
+  const matches = USE_MOCK ? mockMatches : data?.success ? data.data : [];
+*/
+
   // 진행 중 매칭 (수락/거절 안 한 것)
   const pendingMatches = matches
     .filter((m) => m.status === "CANDIDATE" || m.status === "NOTIFIED")
@@ -377,9 +412,6 @@ export default function MatchesScreen() {
                   <Text style={styles.introTitle}>
                     분실물과 유사한 습득물 {pendingMatches.length}개를
                     발견했어요
-                  </Text>
-                  <Text style={styles.introDesc}>
-                    유사도 높은 순으로 최대 5개를 보여드려요
                   </Text>
                 </View>
               </View>
@@ -596,7 +628,7 @@ export default function MatchesScreen() {
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>매칭을 거절하시겠어요?</Text>
             <Text style={styles.modalDesc}>
-              거절한 매칭은 다시 받을 수 없어요.
+              거절하면 이 매칭은 목록에서 사라져요
             </Text>
             <TouchableOpacity
               style={[styles.modalBtn, styles.modalBtnDanger]}
