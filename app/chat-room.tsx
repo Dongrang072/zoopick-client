@@ -362,6 +362,9 @@ export default function ChatRoomScreen() {
               position: "bottom",
               visibilityTime: 2500,
             });
+            if (reason === "RETURNED") {
+              router.replace("/(tabs)/lost-item" as any);
+            }
           }
         },
         onError: () => {
