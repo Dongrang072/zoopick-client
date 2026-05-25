@@ -331,7 +331,7 @@ export default function ChatRoomScreen() {
     setShowCloseModal(false);
     const itemId = chatRoom?.item_id;
     if (itemId) {
-      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId } });
+      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId, mode: "store" } });
     }
   }, [chatRoom]);
 
@@ -350,7 +350,7 @@ export default function ChatRoomScreen() {
             });
             router.replace({
               pathname: ROUTES.SCAN,
-              params: { itemId: itemId }
+              params: { itemId: itemId, mode: "retrieve" }
             });
           } else {
             Toast.show({
