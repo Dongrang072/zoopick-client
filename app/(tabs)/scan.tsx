@@ -136,7 +136,7 @@ export default function QRScanScreen() {
         try {
           await lockerService.unlock(
             parsed.lockerId,
-            parsed.itemId ?? undefined,
+            itemIdParam ? Number(itemIdParam) : (parsed.itemId ?? undefined),
           );
           setModalType("locker_success");
         } catch (e: any) {
@@ -196,6 +196,8 @@ export default function QRScanScreen() {
         await lockerService.lock(lockerId);
       } catch (e) {
         console.error("사물함 닫기 실패", e);
+        Alert.alert("오류", "사물함을 닫는 데 실패했어요. 다시 시도해주세요.");
+        return;
       }
     }
     setModalType(null);

@@ -25,6 +25,7 @@ import {
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -493,7 +494,16 @@ export default function ChatRoomScreen() {
         {!isClosed ? (
           <TouchableOpacity
             style={styles.completeBtn}
-            onPress={() => setShowCloseModal(true)}
+            onPress={() => {
+              if (!isOwner && itemStatus === "IN_LOCKER") {
+                Alert.alert(
+                  "보관 중",
+                  "물건이 사물함에 보관 중입니다.\n분실자가 수령하면 거래가 완료돼요.",
+                );
+                return;
+              }
+              setShowCloseModal(true);
+            }}
           >
             <Text style={styles.completeBtnText}>{isOwner ? "반환 완료" : "양도 완료"}</Text>
           </TouchableOpacity>
@@ -626,12 +636,14 @@ export default function ChatRoomScreen() {
                     <Text style={styles.modalBtnText}>📦 사물함에 물건을 넣을게요</Text>
                   </TouchableOpacity>
                 )}
-                <TouchableOpacity
-                  style={styles.modalBtn}
-                  onPress={() => handleClose("RETURNED")}
-                >
-                  <Text style={styles.modalBtnText}>✅ 물건을 찾아줬어요</Text>
-                </TouchableOpacity>
+                {itemStatus !== "IN_LOCKER" && (
+                  <TouchableOpacity
+                    style={styles.modalBtn}
+                    onPress={() => handleClose("RETURNED")}
+                  >
+                    <Text style={styles.modalBtnText}>✅ 물건을 찾아줬어요</Text>
+                  </TouchableOpacity>
+                )}
               </>
             )}
             <TouchableOpacity
