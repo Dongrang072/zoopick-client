@@ -282,7 +282,7 @@ export default function LostItemRegister() {
                                 );
                                 return;
                             }
-                            router.push(`${ROUTES.SCAN}?itemId=${itemId}` as any);
+                            router.replace(`${ROUTES.SCAN}?itemId=${itemId}&mode=store` as any);
                         } else {
                             if (itemId) router.replace(`${ROUTES.LOST_ITEM_DETAIL}?id=${itemPostId}`);
                             else router.back();

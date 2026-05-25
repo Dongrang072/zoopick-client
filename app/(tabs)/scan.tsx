@@ -45,7 +45,8 @@ type OwnerInfo = {
 export default function QRScanScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { itemId: itemIdParam } = useLocalSearchParams<{ itemId?: string }>();
+  const { itemId: itemIdParam, mode } = useLocalSearchParams<{ itemId?: string; mode?: string }>();
+  const isStoreMode = mode === "store";
   const [permission, requestPermission] = useCameraPermissions();
   const [isScanning, setIsScanning] = useState(false);
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -135,7 +136,7 @@ export default function QRScanScreen() {
         try {
           await lockerService.unlock(
             parsed.lockerId,
-            parsed.itemId ?? undefined,
+            itemIdParam ? Number(itemIdParam) : (parsed.itemId ?? undefined),
           );
           setModalType("locker_success");
         } catch (e: any) {
@@ -195,15 +196,20 @@ export default function QRScanScreen() {
         await lockerService.lock(lockerId);
       } catch (e) {
         console.error("사물함 닫기 실패", e);
+        Alert.alert("오류", "사물함을 닫는 데 실패했어요. 다시 시도해주세요.");
+        return;
       }
     }
     setModalType(null);
     setLockerId(null);
-    if (itemIdParam) {
+    if (isStoreMode && itemIdParam) {
       router.replace({
           pathname: ROUTES.LOST_ITEM_DETAIL,
           params: { itemId: itemIdParam }
       });
+    } else {
+      setLockerReady(false);
+      router.navigate("/(tabs)/lost-item" as any);
     }
   };
 
@@ -261,7 +267,9 @@ export default function QRScanScreen() {
       {/* 바디 */}
       <View style={styles.body}>
         <Text style={styles.guideText}>
-          사물함 QR을 스캔하여 물건을 회수하세요
+          {isStoreMode
+            ? "사물함 QR을 스캔하여 물건을 보관하세요"
+            : "사물함 QR을 스캔하여 물건을 회수하세요"}
         </Text>
         <View style={styles.frameWrap}>
           <View style={styles.frame}>
@@ -359,7 +367,7 @@ export default function QRScanScreen() {
             </View>
             <Text style={styles.modalTitle}>사물함이 열렸어요!</Text>
             <Text style={styles.modalDesc}>
-              {itemIdParam
+              {isStoreMode
                 ? `물건을 사물함에 넣은 후\n아래 버튼을 눌러 닫아주세요.`
                 : `물건을 꺼낸 후\n아래 버튼을 눌러 닫아주세요.`}
             </Text>
@@ -377,7 +385,7 @@ export default function QRScanScreen() {
               >
                 <Text style={styles.lockerCloseBtnText}>
                   {lockerReady
-                    ? itemIdParam
+                    ? isStoreMode
                       ? "넣었어요, 닫기"
                       : "꺼냈어요, 닫기"
                     : "사물함 열리는 중..."}

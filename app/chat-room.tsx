@@ -25,6 +25,7 @@ import {
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Modal,
@@ -331,7 +332,7 @@ export default function ChatRoomScreen() {
     setShowCloseModal(false);
     const itemId = chatRoom?.item_id;
     if (itemId) {
-      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId } });
+      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId, mode: "store" } });
     }
   }, [chatRoom]);
 
@@ -350,24 +351,27 @@ export default function ChatRoomScreen() {
             });
             router.replace({
               pathname: ROUTES.SCAN,
-              params: { itemId: itemId }
+              params: { itemId: itemId, mode: "retrieve" }
             });
           } else {
             Toast.show({
               type: "success",
               text1:
                 reason === "RETURNED"
-                  ? "거래가 완료되었어요"
-                  : "거래가 종료되었어요",
+                  ? "반환이 완료되었어요"
+                  : "연결이 종료되었어요",
               position: "bottom",
               visibilityTime: 2500,
             });
+            if (reason === "RETURNED") {
+              router.replace("/(tabs)/lost-item" as any);
+            }
           }
         },
         onError: () => {
           Toast.show({
             type: "error",
-            text1: "거래 종료 실패",
+            text1: "종료 처리 실패",
             text2: "다시 시도해주세요.",
             position: "bottom",
             visibilityTime: 2500,
@@ -490,7 +494,16 @@ export default function ChatRoomScreen() {
         {!isClosed ? (
           <TouchableOpacity
             style={styles.completeBtn}
-            onPress={() => setShowCloseModal(true)}
+            onPress={() => {
+              if (!isOwner && itemStatus === "IN_LOCKER") {
+                Alert.alert(
+                  "보관 중",
+                  "물건이 사물함에 보관 중입니다.\n분실자가 물건을 찾아가면 마무리돼요.",
+                );
+                return;
+              }
+              setShowCloseModal(true);
+            }}
           >
             <Text style={styles.completeBtnText}>{isOwner ? "반환 완료" : "양도 완료"}</Text>
           </TouchableOpacity>
@@ -524,8 +537,8 @@ export default function ChatRoomScreen() {
         <View style={styles.closedBanner}>
           <Text style={styles.closedText}>
             {chatRoom?.status === "RESOLVED_RETURNED"
-              ? isOwner ? "반환 완료된 거래입니다" : "양도 완료된 거래입니다"
-              : "종료된 거래입니다"}
+              ? isOwner ? "반환이 완료된 채팅입니다" : "양도가 완료된 채팅입니다"
+              : "종료된 채팅입니다"}
           </Text>
         </View>
       )}
@@ -564,7 +577,7 @@ export default function ChatRoomScreen() {
           <TextInput
             style={[styles.input, isClosed && styles.inputDisabled]}
             placeholder={
-              isClosed ? "종료된 거래입니다" : "메시지를 입력하세요..."
+              isClosed ? "종료된 채팅입니다" : "메시지를 입력하세요..."
             }
             placeholderTextColor="#bbb"
             value={inputText}
@@ -593,8 +606,7 @@ export default function ChatRoomScreen() {
         />
         <View style={styles.modalWrap}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>거래 종료</Text>
-            <Text style={styles.modalDesc}>거래를 어떻게 종료할까요?</Text>
+            <Text style={styles.modalTitle}>마무리 방법 선택</Text>
             {isOwner ? (
               <>
                 {itemStatus === "IN_LOCKER" ? (
@@ -623,12 +635,14 @@ export default function ChatRoomScreen() {
                     <Text style={styles.modalBtnText}>📦 사물함에 물건을 넣을게요</Text>
                   </TouchableOpacity>
                 )}
-                <TouchableOpacity
-                  style={styles.modalBtn}
-                  onPress={() => handleClose("RETURNED")}
-                >
-                  <Text style={styles.modalBtnText}>✅ 물건을 찾아줬어요</Text>
-                </TouchableOpacity>
+                {itemStatus !== "IN_LOCKER" && (
+                  <TouchableOpacity
+                    style={styles.modalBtn}
+                    onPress={() => handleClose("RETURNED")}
+                  >
+                    <Text style={styles.modalBtnText}>✅ 물건을 찾아줬어요</Text>
+                  </TouchableOpacity>
+                )}
               </>
             )}
             <TouchableOpacity
@@ -636,7 +650,7 @@ export default function ChatRoomScreen() {
               onPress={() => handleClose("ABANDONED")}
             >
               <Text style={[styles.modalBtnText, styles.modalBtnTextGray]}>
-                거래를 포기할게요
+                그냥 포기할게요
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
