@@ -5,13 +5,17 @@ import {
     CreateItemResponse,
     ItemFilter,
     ItemListResponse,
+    ItemOwnerInfoResult,
     ItemPost,
+    ItemType,
 } from "../types";
 import {
     ITEM_BY_ITEM_ID,
+    ITEM_OWNER_INFO_URL,
     ITEMS_CREATE_URL,
     ITEMS_DETAIL_URL,
     ITEMS_LIST_URL,
+    MY_ITEMS_URL,
 } from "@/constants/url";
 
 export const itemService = {
@@ -44,6 +48,20 @@ export const itemService = {
             data,
         );
         console.log(response.data);
+        return response.data;
+    },
+
+    getMyItems: async (type: ItemType) => {
+        const response = await axiosInstance.get<ApiResponse<ItemPost[]>>(
+            `${MY_ITEMS_URL}?type=${type}`,
+        );
+        return response.data;
+    },
+
+    getItemOwnerInfo: async (itemId: number) => {
+        const response = await axiosInstance.get<ApiResponse<ItemOwnerInfoResult>>(
+            `${ITEM_OWNER_INFO_URL}/${itemId}/owner-info`,
+        );
         return response.data;
     },
 };

@@ -16,6 +16,8 @@ export const ITEMS_LIST_URL = BASE_URL + "/api/items/post/list";
 export const ITEM_BY_ITEM_ID = BASE_URL + "/api/items/post/by-item";
 export const ITEMS_CREATE_URL = BASE_URL + "/api/items/post/create";
 export const ITEMS_DETAIL_URL = BASE_URL + "/api/items/post/list";
+export const MY_ITEMS_URL = BASE_URL + "/api/items/me";
+export const ITEM_OWNER_INFO_URL = BASE_URL + "/api/items";
 
 // User / Profiles
 export const PROFILE_ME_URL = BASE_URL + "/api/profiles/me";

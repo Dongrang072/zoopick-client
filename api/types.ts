@@ -166,15 +166,19 @@ export interface ItemPost {
   id: number;
   title: string;
   description: string;
-  item_id: number;
   type: ItemType;
-  status: string;
+  status: ItemStatus;
   category: string;
+  name: string;
+  color: string;
+  nickname: string;
+  item_id: number;
+  reporter_id?: number;
   image_url: string;
   building_id: number;
   data_address: string;
   created_at: string;
-  reporter_id?: number;
+  reported_at: string;
 }
 
 export interface ItemListResponse {
@@ -205,7 +209,7 @@ export interface CreateItemResponse {
   item_post_id: number;
   item_id: number;
   message: string;
-  item_status: string;
+  item_status: ItemStatus;
 }
 
 // QR 스캔 시 물품 소유자 정보

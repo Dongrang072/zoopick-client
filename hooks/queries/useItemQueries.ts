@@ -1,6 +1,6 @@
 import {useInfiniteQuery, useQuery} from "@tanstack/react-query";
 import {itemService} from "@/api/services/item";
-import {ItemFilter} from "@/api/types";
+import {ItemFilter, ItemType} from "@/api/types";
 
 export const useItemQueries = {
     useItems: (page = 0, size = 20, filter: ItemFilter = {}) => {
@@ -39,5 +39,20 @@ export const useItemQueries = {
             queryFn: () => itemService.getItemPostByItemId(itemId),
             enabled: !!itemId,
         })
-    }
+    },
+
+    useMyItems: (type: ItemType) => {
+        return useQuery({
+            queryKey: ["myItems", type],
+            queryFn: () => itemService.getMyItems(type),
+        });
+    },
+
+    useItemOwnerInfo: (itemId: number) => {
+        return useQuery({
+            queryKey: ["itemOwnerInfo", itemId],
+            queryFn: () => itemService.getItemOwnerInfo(itemId),
+            enabled: !!itemId,
+        });
+    },
 };
