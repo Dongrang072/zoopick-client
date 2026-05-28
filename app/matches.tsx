@@ -216,8 +216,7 @@ export default function MatchesScreen() {
     .filter((m) => m.status === "CANDIDATE" || m.status === "NOTIFIED")
     .filter((m) => !rejectedIds.includes(m.match_id)) // 거절된 것 제외
     .filter((m) => !acceptedIds.includes(m.match_id)) // 수락된 것 제외 (완료 섹션으로 이동)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
+    .sort((a, b) => b.score - a.score);
 
   // 완료된 매칭 (수락된 것들)
   const completedMatches = matches.filter((m) =>
