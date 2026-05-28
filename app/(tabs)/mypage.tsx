@@ -12,7 +12,6 @@ import {
   Lock,
   LogOut,
   MessageCircle,
-  Pencil,
   ShieldCheck,
   TrendingUp,
   User,
@@ -50,7 +49,7 @@ export default function MyPageScreen() {
           } catch {
             // 서버 실패해도 로컬 정리 진행
           } finally {
-            clearToken();      // 토큰 먼저 제거 → enabled: !!token = false
+            clearToken(); // 토큰 먼저 제거 → enabled: !!token = false
             queryClient.clear(); // 이후 캐시 정리 (re-fetch 시도 안 함)
           }
         },
@@ -73,7 +72,10 @@ export default function MyPageScreen() {
         <Text className="text-xl font-pretendard-bold text-gray-900">
           내 정보
         </Text>
-        <TouchableOpacity className="relative p-2" onPress={() => router.push(ROUTES.NOTIFICATION as any)}>
+        <TouchableOpacity
+          className="relative p-2"
+          onPress={() => router.push(ROUTES.NOTIFICATION as any)}
+        >
           <Bell size={24} color="#1F2937" />
           {profile && profile.unreadNotificationCount > 0 && (
             <View className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
@@ -89,12 +91,6 @@ export default function MyPageScreen() {
               <View className="w-20 h-20 rounded-full bg-indigo-50 items-center justify-center border-2 border-indigo-100 overflow-hidden">
                 <User size={32} color="#818CF8" />
               </View>
-              <TouchableOpacity
-                className="absolute bottom-0 right-0 w-7 h-7 bg-indigo-500 rounded-full items-center justify-center border-2 border-white shadow-sm"
-                onPress={() => setIsEditModalVisible(true)}
-              >
-                <Pencil size={12} color="white" />
-              </TouchableOpacity>
             </View>
 
             <View className="flex-1 ml-5">
@@ -126,7 +122,10 @@ export default function MyPageScreen() {
           {[
             { label: "주은 물품", value: profile?.postCount ?? 0 },
             { label: "채팅방 수", value: profile?.chatRoomCount ?? 0 },
-            { label: "읽지 않은 알림", value: profile?.unreadNotificationCount ?? 0 },
+            {
+              label: "읽지 않은 알림",
+              value: profile?.unreadNotificationCount ?? 0,
+            },
           ].map((stat, idx) => (
             <View
               key={stat.label}
@@ -166,9 +165,6 @@ export default function MyPageScreen() {
             </Text>
             <View className="flex-row items-center gap-1">
               <View className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-              <Text className="text-xs font-pretendard-bold text-indigo-500">
-                매칭 확인하기
-              </Text>
             </View>
           </TouchableOpacity>
 
@@ -194,9 +190,6 @@ export default function MyPageScreen() {
             </Text>
             <View className="flex-row items-center gap-1">
               <View className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-              <Text className="text-xs font-pretendard-regular text-gray-400">
-                준비 중
-              </Text>
             </View>
           </TouchableOpacity>
         </View>
