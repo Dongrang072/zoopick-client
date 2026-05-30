@@ -50,8 +50,8 @@ const requestNotificationPermission = async () => {
 };
 
 export function useNotifications() {
-    messaging().setBackgroundMessageHandler(displayNotification);
     useEffect(() => {
+        messaging().setBackgroundMessageHandler(displayNotification);
         messaging().registerDeviceForRemoteMessages();
 
         requestNotificationPermission().then(granted => {
