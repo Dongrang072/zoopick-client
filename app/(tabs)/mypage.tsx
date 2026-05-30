@@ -9,7 +9,6 @@ import {
   Bell,
   Camera,
   ChevronRight,
-  Lock,
   LogOut,
   MessageCircle,
   QrCode,
@@ -264,18 +263,6 @@ export default function MyPageScreen() {
               </View>
               <Text className="text-sm font-pretendard-medium text-gray-700">
                 내 QR코드 발급
-              </Text>
-            </View>
-            <ChevronRight size={18} color="#D1D5DB" />
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex-row items-center justify-between px-5 py-4 border-t border-gray-50">
-            <View className="flex-row items-center">
-              <View className="w-8 h-8 rounded-xl bg-gray-50 items-center justify-center mr-3">
-                <Lock size={18} color="#6B7280" />
-              </View>
-              <Text className="text-sm font-pretendard-medium text-gray-700">
-                비밀번호 변경
               </Text>
             </View>
             <ChevronRight size={18} color="#D1D5DB" />
