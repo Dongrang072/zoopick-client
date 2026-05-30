@@ -41,7 +41,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { WebView } from "react-native-webview";
 
-const KAKAO_API_KEY = "7488059674373cdf0eb9299fef1ec2ec";
+const KAKAO_API_KEY = process.env.EXPO_PUBLIC_KAKAO_API_KEY ?? "";
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 function formatDateTime(dateStr: string) {
