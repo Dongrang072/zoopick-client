@@ -332,9 +332,9 @@ export default function ChatRoomScreen() {
     setShowCloseModal(false);
     const itemId = chatRoom?.item_id;
     if (itemId) {
-      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId, mode: "store" } });
+      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId, mode: "store", roomId: String(roomIdNum) } });
     }
-  }, [chatRoom]);
+  }, [chatRoom, roomIdNum]);
 
   const handleClose = useCallback(
     (reason: "RETURNED" | "ABANDONED", navigateToScan = false) => {
