@@ -4,6 +4,7 @@ import {
   CATEGORY_MAP,
   CATEGORY_TO_API,
   ITEM_STATUS_LABEL,
+  ITEM_STATUS_MAP,
   ITEM_STATUS_STYLE,
   ITEM_TYPE_MAP,
 } from "@/constants/categories";
@@ -15,6 +16,7 @@ import { useRouter } from "expo-router";
 import NotificationBell from "@/components/NotificationBell";
 import {
   ChevronDown,
+  Lock,
   MapPin,
   Package,
   Plus,
@@ -334,6 +336,7 @@ export default function LostItemBoard() {
             renderItem={({ item }) => {
               const korCategory = CATEGORY_MAP[item.category] ?? "기타";
               const isTheftConfirmed = item.status === "THEFT_CONFIRMED";
+              const isInLocker = item.status === "IN_LOCKER";
               const korStatus = isTheftConfirmed
                 ? ITEM_STATUS_LABEL.THEFT_CONFIRMED
                 : (ITEM_TYPE_MAP[item.type] ?? item.type);
@@ -391,14 +394,15 @@ export default function LostItemBoard() {
                   </View>
                   <View style={styles.itemRight}>
                     <View style={styles.statusBadge}>
-                      <View
-                        style={[
-                          styles.statusDot,
-                          { backgroundColor: statusStyle.dot },
-                        ]}
-                      />
+                      <View style={[styles.statusDot, { backgroundColor: statusStyle.dot }]} />
                       <Text style={styles.statusText}>{korStatus}</Text>
                     </View>
+                    {isInLocker && (
+                      <View style={styles.lockerBadge}>
+                        <Lock size={10} color="#f43f5e" />
+                        <Text style={styles.lockerBadgeText}>{ITEM_STATUS_MAP.IN_LOCKER}</Text>
+                      </View>
+                    )}
                   </View>
                 </TouchableOpacity>
               );
@@ -551,6 +555,8 @@ const styles = StyleSheet.create({
   },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
   statusText: { fontSize: 11, fontFamily: fonts.bold, color: "#555" },
+  lockerBadge: { flexDirection: "row", alignItems: "center", gap: 3, backgroundColor: "#fff1f2", borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4, marginTop: 4 },
+  lockerBadgeText: { fontSize: 10, fontFamily: fonts.bold, color: "#f43f5e" },
   emptyBox: { alignItems: "center", paddingVertical: 60 },
   emptyText: { fontSize: 14, color: "#aaa", fontFamily: fonts.regular },
   fab: {

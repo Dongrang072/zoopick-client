@@ -151,6 +151,7 @@ export default function NotificationsScreen() {
       console.error("알림 읽음 처리 실패", e);
     }
     const config = NOTIFICATION_CONFIG[item.type];
+    if (!config) return;
     router.push(config.route as any);
   };
 
@@ -214,6 +215,7 @@ export default function NotificationsScreen() {
         }
         renderItem={({ item }) => {
           const config = NOTIFICATION_CONFIG[item.type];
+          if (!config) return null;
           const IconComponent = config.icon;
           const isUnread = !item.read_at;
 

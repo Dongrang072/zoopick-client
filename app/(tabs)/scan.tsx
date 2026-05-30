@@ -45,7 +45,7 @@ type OwnerInfo = {
 export default function QRScanScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { itemId: itemIdParam, mode } = useLocalSearchParams<{ itemId?: string; mode?: string }>();
+  const { itemId: itemIdParam, mode, roomId: roomIdParam } = useLocalSearchParams<{ itemId?: string; mode?: string; roomId?: string }>();
   const isStoreMode = mode === "store";
   const [permission, requestPermission] = useCameraPermissions();
   const [isScanning, setIsScanning] = useState(false);
@@ -203,10 +203,11 @@ export default function QRScanScreen() {
     setModalType(null);
     setLockerId(null);
     if (isStoreMode && itemIdParam) {
-      router.replace({
-          pathname: ROUTES.LOST_ITEM_DETAIL,
-          params: { itemId: itemIdParam }
-      });
+      if (roomIdParam) {
+        router.replace({ pathname: ROUTES.CHAT_ROOM, params: { roomId: roomIdParam } });
+      } else {
+        router.replace({ pathname: ROUTES.LOST_ITEM_DETAIL, params: { itemId: itemIdParam } });
+      }
     } else {
       setLockerReady(false);
       router.navigate("/(tabs)/lost-item" as any);

@@ -9,9 +9,9 @@ import {
   Bell,
   Camera,
   ChevronRight,
-  Lock,
   LogOut,
   MessageCircle,
+  QrCode,
   ShieldCheck,
   TrendingUp,
   User,
@@ -253,13 +253,16 @@ export default function MyPageScreen() {
             계정
           </Text>
 
-          <TouchableOpacity className="flex-row items-center justify-between px-5 py-4 border-t border-gray-50">
+          <TouchableOpacity
+            className="flex-row items-center justify-between px-5 py-4 border-t border-gray-50"
+            onPress={() => router.push(ROUTES.MY_QR as any)}
+          >
             <View className="flex-row items-center">
-              <View className="w-8 h-8 rounded-xl bg-gray-50 items-center justify-center mr-3">
-                <Lock size={18} color="#6B7280" />
+              <View className="w-8 h-8 rounded-xl bg-indigo-50 items-center justify-center mr-3">
+                <QrCode size={18} color="#6366F1" />
               </View>
               <Text className="text-sm font-pretendard-medium text-gray-700">
-                비밀번호 변경
+                내 QR코드 발급
               </Text>
             </View>
             <ChevronRight size={18} color="#D1D5DB" />

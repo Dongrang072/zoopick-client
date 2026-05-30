@@ -1,6 +1,7 @@
 import { BASE_URL, ROUTES } from "@/constants/url";
 import { useCctvQueries } from "@/hooks/queries/useCctvQueries";
 import { fonts } from "@/constants/typography";
+import { CATEGORY_MAP } from "@/constants/categories";
 // import { mockCctvItems } from "@/mocks/cctv";
 import { Camera, ChevronLeft, ChevronRight, Package } from "lucide-react-native";
 import {
@@ -93,7 +94,7 @@ export default function CctvItemsScreen() {
                             <View style={styles.info}>
                                 <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
                                 <View style={styles.categoryBadge}>
-                                    <Text style={styles.categoryText}>{item.category}</Text>
+                                    <Text style={styles.categoryText}>{CATEGORY_MAP[item.category] ?? item.category}</Text>
                                 </View>
                                 <Text style={styles.reportedAt}>{item.reported_at}</Text>
                             </View>

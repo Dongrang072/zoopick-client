@@ -4,7 +4,7 @@ export const mockCctvItems: CctvMatchedLostItem[] = [
     {
         lost_item_id: 1,
         title: "파란 우산",
-        category: "우산",
+        category: "UMBRELLA",
         match_count: 3,
         reported_at: "2026-05-14",
         image_url: "https://picsum.photos/seed/umbrella/200",
@@ -12,7 +12,7 @@ export const mockCctvItems: CctvMatchedLostItem[] = [
     {
         lost_item_id: 2,
         title: "에어팟 프로 케이스",
-        category: "전자기기",
+        category: "EARPHONES",
         match_count: 1,
         reported_at: "2026-05-15",
         image_url: "https://picsum.photos/seed/airpods/200",
@@ -20,7 +20,7 @@ export const mockCctvItems: CctvMatchedLostItem[] = [
     {
         lost_item_id: 3,
         title: "갈색 반지갑",
-        category: "지갑/가방",
+        category: "WALLET",
         match_count: 5,
         reported_at: "2026-05-16",
         image_url: "https://picsum.photos/seed/wallet/200",
