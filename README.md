@@ -73,10 +73,9 @@ npm install
 
 # 3. 환경변수 설정
 # 프로젝트 루트에 .env 파일을 생성하고 아래 두 값을 입력하세요
-cat > .env << 'EOF'
 EXPO_PUBLIC_BASE_URL=http://52.63.7.132:8080
 EXPO_PUBLIC_KAKAO_API_KEY=your_kakao_api_key_here
-EOF
+
 
 # 4. Android 기기를 USB로 연결한 뒤 앱 빌드 및 실행
 npx expo run:android
