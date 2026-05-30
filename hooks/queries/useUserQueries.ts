@@ -9,3 +9,10 @@ export const useProfile = (options?: Partial<UseQueryOptions<UserProfile>>) => {
         ...options,
     });
 };
+
+export const useMyQrCode = () => {
+    return useQuery({
+        queryKey: ['myQrCode'],
+        queryFn: () => userService.getMyQrCode(),
+    });
+};

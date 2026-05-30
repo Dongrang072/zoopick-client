@@ -21,6 +21,7 @@ export const ITEM_OWNER_INFO_URL = BASE_URL + "/api/items";
 
 // User / Profiles
 export const PROFILE_ME_URL = BASE_URL + "/api/profiles/me";
+export const PROFILE_ME_QR_URL = BASE_URL + "/api/profiles/me/qr";
 export const USER_ACCOUNT_URL = BASE_URL + "/api/user/account";
 
 // Scan

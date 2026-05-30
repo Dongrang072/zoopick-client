@@ -12,6 +12,7 @@ import {
   Lock,
   LogOut,
   MessageCircle,
+  QrCode,
   ShieldCheck,
   TrendingUp,
   User,
@@ -252,6 +253,21 @@ export default function MyPageScreen() {
           <Text className="text-sm font-pretendard-bold text-gray-800 px-5 pt-5 pb-3">
             계정
           </Text>
+
+          <TouchableOpacity
+            className="flex-row items-center justify-between px-5 py-4 border-t border-gray-50"
+            onPress={() => router.push(ROUTES.MY_QR as any)}
+          >
+            <View className="flex-row items-center">
+              <View className="w-8 h-8 rounded-xl bg-indigo-50 items-center justify-center mr-3">
+                <QrCode size={18} color="#6366F1" />
+              </View>
+              <Text className="text-sm font-pretendard-medium text-gray-700">
+                내 QR코드 발급
+              </Text>
+            </View>
+            <ChevronRight size={18} color="#D1D5DB" />
+          </TouchableOpacity>
 
           <TouchableOpacity className="flex-row items-center justify-between px-5 py-4 border-t border-gray-50">
             <View className="flex-row items-center">

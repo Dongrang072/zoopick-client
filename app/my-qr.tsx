@@ -1,16 +1,23 @@
 import { fonts } from "@/constants/typography";
-import { useProfile } from "@/hooks/queries/useUserQueries";
+import { PROFILE_ME_QR_URL } from "@/constants/url";
+import { useMyQrCode, useProfile } from "@/hooks/queries/useUserQueries";
+import { useAuthStore } from "@/store/authStore";
+import * as FileSystem from "expo-file-system/legacy";
+import * as MediaLibrary from "expo-media-library";
 import { useRouter } from "expo-router";
-import { ChevronLeft, Info, ScanLine, Sparkles } from "lucide-react-native";
+import { ChevronLeft, Download, Info, ScanLine, Sparkles } from "lucide-react-native";
+import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
+  Image,
+  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import QRCode from "react-native-qrcode-svg";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -19,25 +26,46 @@ const QR_SIZE = Math.min(SCREEN_WIDTH - 80, 260);
 export default function MyQRScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { data: profile, isLoading } = useProfile();
+  const { data: qrDataUri, isLoading: isQrLoading } = useMyQrCode();
+  const { data: profile, isLoading: isProfileLoading } = useProfile();
+  const [isSaving, setIsSaving] = useState(false);
 
-  if (isLoading) {
+  const handleDownload = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("갤러리 권한 필요", "설정에서 갤러리 권한을 허용해주세요.", [
+          { text: "취소", style: "cancel" },
+          { text: "설정 열기", onPress: () => Linking.openSettings() },
+        ]);
+        return;
+      }
+
+      const token = useAuthStore.getState().token;
+      const tempPath = FileSystem.cacheDirectory + "my-qr.png";
+      const result = await FileSystem.downloadAsync(
+        PROFILE_ME_QR_URL,
+        tempPath,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      await MediaLibrary.saveToLibraryAsync(result.uri);
+      Alert.alert("저장 완료", "QR 코드가 갤러리에 저장되었습니다.");
+    } catch {
+      Alert.alert("저장 실패", "이미지 저장 중 오류가 발생했습니다.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isQrLoading || isProfileLoading) {
     return (
-      <View
-        style={[
-          styles.container,
-          { alignItems: "center", justifyContent: "center" },
-        ]}
-      >
+      <View style={[styles.container, { alignItems: "center", justifyContent: "center" }]}>
         <ActivityIndicator color="#6366f1" size="large" />
       </View>
     );
   }
-
-  // QR 데이터: 닉네임 기반 (백엔드 명세에 따라 추후 수정 가능)
-  const qrValue = profile?.nickname
-    ? `zoopick://owner/${profile.nickname}`
-    : "zoopick://owner/unknown";
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -66,24 +94,47 @@ export default function MyQRScreen() {
       {/* QR 카드 */}
       <View style={styles.qrCard}>
         <View style={styles.qrWrap}>
-          <QRCode
-            value={qrValue}
-            size={QR_SIZE}
-            color="#111"
-            backgroundColor="#fff"
-          />
+          {qrDataUri ? (
+            <Image
+              source={{ uri: qrDataUri }}
+              style={{ width: QR_SIZE, height: QR_SIZE }}
+              resizeMode="contain"
+            />
+          ) : (
+            <View
+              style={{
+                width: QR_SIZE,
+                height: QR_SIZE,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={styles.errorText}>QR 코드를 불러올 수 없습니다</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.profileBox}>
           <Text style={styles.profileLabel}>소유자</Text>
-          <Text style={styles.profileName}>
-            {profile?.nickname ?? "사용자"}
-          </Text>
+          <Text style={styles.profileName}>{profile?.nickname ?? "사용자"}</Text>
           {profile?.department ? (
             <Text style={styles.profileDept}>{profile.department}</Text>
           ) : null}
         </View>
       </View>
+
+      {/* 다운로드 버튼 */}
+      <TouchableOpacity
+        style={[styles.downloadBtn, isSaving && { opacity: 0.5 }]}
+        onPress={handleDownload}
+        disabled={isSaving}
+        activeOpacity={0.8}
+      >
+        <Download size={18} color="#fff" />
+        <Text style={styles.downloadBtnText}>
+          {isSaving ? "저장 중..." : "이미지 저장"}
+        </Text>
+      </TouchableOpacity>
 
       {/* 안내 사항 */}
       <View style={styles.tips}>
@@ -175,8 +226,25 @@ const styles = StyleSheet.create({
   profileLabel: { fontSize: 11, fontFamily: fonts.regular, color: "#aaa" },
   profileName: { fontSize: 18, fontFamily: fonts.bold, color: "#111" },
   profileDept: { fontSize: 12, fontFamily: fonts.regular, color: "#888" },
+  errorText: { fontSize: 13, fontFamily: fonts.regular, color: "#aaa" },
+  downloadBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    marginHorizontal: 20,
+    marginTop: 20,
+    paddingVertical: 14,
+    backgroundColor: "#6366f1",
+    borderRadius: 16,
+  },
+  downloadBtnText: {
+    fontSize: 15,
+    fontFamily: fonts.bold,
+    color: "#fff",
+  },
   tips: {
-    marginTop: 24,
+    marginTop: 20,
     marginHorizontal: 20,
     gap: 8,
   },
