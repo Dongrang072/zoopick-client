@@ -45,6 +45,10 @@ export const ITEM_TYPE_MAP: Record<string, string> = {
   FOUND: "발견됨",
 };
 
+export const ITEM_STATUS_MAP: Record<string, string> = {
+  IN_LOCKER: "사물함 보관중",
+};
+
 export const ITEM_STATUS_STYLE: Record<
   string,
   { bg: string; text: string; dot: string }
@@ -52,6 +56,7 @@ export const ITEM_STATUS_STYLE: Record<
   LOST: { bg: "#fff7ed", text: "#f97316", dot: "#f97316" },
   FOUND: { bg: "#dcfce7", text: "#16a34a", dot: "#22c55e" },
   THEFT_CONFIRMED: { bg: "#fee2e2", text: "#dc2626", dot: "#ef4444" },
+  IN_LOCKER: { bg: "#fff1f2", text: "#f43f5e", dot: "#f43f5e" },
 };
 
 export const ITEM_STATUS_LABEL: Record<string, string> = {

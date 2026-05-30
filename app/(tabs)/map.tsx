@@ -2,6 +2,7 @@ import { BASE_BUILDINGS } from "@/constants/buildings";
 import {
   CATEGORY_ICON_MAP,
   CATEGORY_MAP,
+  ITEM_STATUS_MAP,
   ITEM_STATUS_STYLE,
   ITEM_TYPE_MAP,
 } from "@/constants/categories";
@@ -15,6 +16,7 @@ import NotificationBell from "@/components/NotificationBell";
 import {
   ChevronRight,
   Crosshair,
+  Lock,
   Package,
   Plus,
   Search,
@@ -373,10 +375,9 @@ export default function MapScreen() {
               ) : (
                 filteredItems.map((item) => {
                   const korCategory = CATEGORY_MAP[item.category] ?? "기타";
+                  const isInLocker = item.status === "IN_LOCKER";
                   const korStatus = ITEM_TYPE_MAP[item.type] ?? item.type;
-                  const statusStyle = ITEM_STATUS_STYLE[item.type] ?? {
-                    dot: "#aaa",
-                  };
+                  const statusStyle = ITEM_STATUS_STYLE[item.type] ?? { dot: "#aaa" };
                   const IconComponent =
                     CATEGORY_ICON_MAP[item.category] ?? Package;
                   const buildingName =
@@ -421,14 +422,15 @@ export default function MapScreen() {
                       </View>
                       <View style={styles.itemRight}>
                         <View style={styles.statusBadge}>
-                          <View
-                            style={[
-                              styles.statusDot,
-                              { backgroundColor: statusStyle.dot },
-                            ]}
-                          />
+                          <View style={[styles.statusDot, { backgroundColor: statusStyle.dot }]} />
                           <Text style={styles.statusText}>{korStatus}</Text>
                         </View>
+                        {isInLocker && (
+                          <View style={styles.lockerBadge}>
+                            <Lock size={10} color="#f43f5e" />
+                            <Text style={styles.lockerBadgeText}>{ITEM_STATUS_MAP.IN_LOCKER}</Text>
+                          </View>
+                        )}
                         <ChevronRight
                           size={14}
                           color="#ccc"
@@ -598,4 +600,6 @@ const styles = StyleSheet.create({
   },
   statusDot: { width: 5, height: 5, borderRadius: 3 },
   statusText: { fontSize: 10, fontFamily: fonts.bold, color: "#555" },
+  lockerBadge: { flexDirection: "row", alignItems: "center", gap: 3, backgroundColor: "#fff1f2", borderRadius: 8, paddingHorizontal: 6, paddingVertical: 3 },
+  lockerBadgeText: { fontSize: 10, fontFamily: fonts.bold, color: "#f43f5e" },
 });

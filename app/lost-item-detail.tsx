@@ -3,6 +3,7 @@ import {
   CATEGORY_ICON_MAP,
   CATEGORY_MAP,
   ITEM_STATUS_LABEL,
+  ITEM_STATUS_MAP,
   ITEM_STATUS_STYLE,
   ITEM_TYPE_MAP,
 } from "@/constants/categories";
@@ -16,6 +17,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   AlertTriangle,
   ChevronLeft,
+  Lock,
   MapPin,
   MessageCircle,
   Package,
@@ -151,6 +153,7 @@ export default function LostItemDetail() {
   const korCategory = CATEGORY_MAP[itemPost.category] ?? "기타";
   const IconComponent = CATEGORY_ICON_MAP[itemPost.category] ?? Package;
   const isTheftConfirmed = itemPost.status === "THEFT_CONFIRMED";
+  const isInLocker = itemPost.status === "IN_LOCKER";
   const isMyPost = !!profile && itemPost.reporter_id === profile.userId;
   const statusStyle = (isTheftConfirmed
     ? ITEM_STATUS_STYLE.THEFT_CONFIRMED
@@ -213,6 +216,12 @@ export default function LostItemDetail() {
                   : ITEM_TYPE_MAP[itemPost.type]}
               </Text>
             </View>
+            {isInLocker && (
+              <View style={[styles.statusBadge, { backgroundColor: "#fff1f2", flexDirection: "row", alignItems: "center", gap: 4 }]}>
+                <Lock size={11} color="#f43f5e" />
+                <Text style={[styles.statusBadgeText, { color: "#f43f5e" }]}>{ITEM_STATUS_MAP.IN_LOCKER}</Text>
+              </View>
+            )}
           </View>
 
           <Text style={styles.title}>{itemPost.title ?? "제목 없음"}</Text>
@@ -379,7 +388,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 100,
   },
-  badgeRow: { flexDirection: "row", gap: 8, marginBottom: 12 },
+  badgeRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
   categoryBadge: {
     backgroundColor: "#f3f4f6",
     borderRadius: 20,
