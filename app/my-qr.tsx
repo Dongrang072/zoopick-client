@@ -140,13 +140,7 @@ export default function MyQRScreen() {
       <View style={styles.tips}>
         <View style={styles.tipRow}>
           <ScanLine size={14} color="#888" />
-          <Text style={styles.tipText}>QR을 인쇄해서 물건에 부착해주세요</Text>
-        </View>
-        <View style={styles.tipRow}>
-          <Info size={14} color="#888" />
-          <Text style={styles.tipText}>
-            상대방이 스캔하기 쉽도록 화면을 밝게 해주세요
-          </Text>
+          <Text style={styles.tipText}>QR 이미지를 다운로드 후 인쇄해서 물건에 부착해주세요</Text>
         </View>
       </View>
     </View>
