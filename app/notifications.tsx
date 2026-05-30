@@ -56,6 +56,12 @@ const NOTIFICATION_CONFIG = {
     message: "물건이 성공적으로 반환되었어요.",
     route: ROUTES.CHAT,
   },
+  ITEM_REPORTED: {
+    icon: CheckCircle,
+    label: "분실물",
+    message: "분실물이 있어요. 확인해보세요",
+    route: ROUTES.LOST_ITEM_BOARD,
+  },
   THEFT_SUSPECTED: {
     icon: AlertTriangle,
     label: "도난 의심",
@@ -74,6 +80,12 @@ const NOTIFICATION_CONFIG = {
     message: "사물함이 준비되었어요. QR을 스캔해 물건을 꺼내세요.",
     route: ROUTES.SCAN,
   },
+  QR_SCANNED: {
+    icon: CheckCircle,
+    label: "분실물 발견",
+    message: "분실물이 발견되었어요.",
+    route: ROUTES.CHAT,
+  }
 };
 
 function timeAgo(dateStr: string) {
