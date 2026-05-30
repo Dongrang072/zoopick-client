@@ -74,7 +74,7 @@ export default function ChatScreen() {
           return res.success ? res.data : null;
         }),
       );
-      setChatRooms(rooms.filter(Boolean) as ChatRoomRecord[]);
+      setChatRooms((rooms.filter(Boolean) as ChatRoomRecord[]).sort((a, b) => b.room_id - a.room_id));
     } catch (e) {
       console.error("채팅방 목록 조회 실패", e);
       setChatRooms([]);
