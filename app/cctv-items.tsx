@@ -1,7 +1,8 @@
 import { BASE_URL, ROUTES } from "@/constants/url";
 import { useCctvQueries } from "@/hooks/queries/useCctvQueries";
 import { fonts } from "@/constants/typography";
-// import { mockCctvItems } from "@/mocks/cctv";
+import { CATEGORY_MAP } from "@/constants/categories";
+import { mockCctvItems } from "@/mocks/cctv";
 import { Camera, ChevronLeft, ChevronRight, Package } from "lucide-react-native";
 import {
     ActivityIndicator,
@@ -23,9 +24,8 @@ export default function CctvItemsScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     const { data, isLoading, refetch } = useCctvQueries.useMyItems();
-    // const USE_MOCK = true;
-    // const items = USE_MOCK ? mockCctvItems : (data?.data?.data?.matched_lost_items ?? []);
-    const items = data?.data?.data?.matched_lost_items ?? [];
+    const USE_MOCK = true;
+    const items = USE_MOCK ? mockCctvItems : (data?.data?.data?.matched_lost_items ?? []);
 
     const onRefresh = async () => {
         setIsRefreshing(true);
@@ -33,8 +33,7 @@ export default function CctvItemsScreen() {
         setIsRefreshing(false);
     };
 
-    // if (!USE_MOCK && isLoading) {
-    if (isLoading) {
+    if (!USE_MOCK && isLoading) {
         return (
             <View style={[styles.container, { alignItems: "center", justifyContent: "center" }]}>
                 <ActivityIndicator color="#ef4444" size="large" />
@@ -93,7 +92,7 @@ export default function CctvItemsScreen() {
                             <View style={styles.info}>
                                 <Text style={styles.title} numberOfLines={1}>{item.title}</Text>
                                 <View style={styles.categoryBadge}>
-                                    <Text style={styles.categoryText}>{item.category}</Text>
+                                    <Text style={styles.categoryText}>{CATEGORY_MAP[item.category] ?? item.category}</Text>
                                 </View>
                                 <Text style={styles.reportedAt}>{item.reported_at}</Text>
                             </View>
