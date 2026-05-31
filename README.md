@@ -73,8 +73,13 @@ npm install
 
 # 3. 환경변수 설정
 # 프로젝트 루트에 .env 파일을 생성하고 아래 두 값을 입력하세요
-EXPO_PUBLIC_BASE_URL=http://52.63.7.132:8080
+
+# API 서버 기본 주소 (예: 로컬 개발 시 http://localhost:port_number 입력)
+EXPO_PUBLIC_BASE_URL=http://api.example.com
+
+# 카카오 API 키 (카카오 디벨로퍼스에서 발급받은 REST API 키 입력)
 EXPO_PUBLIC_KAKAO_API_KEY=your_kakao_api_key_here
+
 
 
 # 4. Android 기기를 USB로 연결한 뒤 앱 빌드 및 실행
