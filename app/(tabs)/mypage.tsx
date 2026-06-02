@@ -145,52 +145,36 @@ export default function MyPageScreen() {
         <View className="flex-row gap-3 mx-4 mt-4">
           {/* AI 매칭 카드 */}
           <TouchableOpacity
-            className="flex-1 bg-white rounded-3xl p-4 border border-gray-100 shadow-sm overflow-hidden"
+            className="flex-1 bg-white rounded-3xl p-4 border border-gray-100 shadow-sm"
             onPress={() => router.push(ROUTES.MATCHES)}
             activeOpacity={0.85}
           >
             <View className="w-11 h-11 rounded-2xl bg-indigo-500 items-center justify-center mb-3">
               <TrendingUp size={22} color="#fff" />
             </View>
-            {/* 배경 원 장식 */}
-            <View
-              className="absolute top-3 right-3 w-16 h-16 rounded-full bg-indigo-100"
-              style={{ opacity: 0.4 }}
-            />
             <Text className="text-sm font-pretendard-bold text-gray-900 mb-0.5">
               AI 매칭
             </Text>
-            <Text className="text-xs font-pretendard-regular text-gray-400 mb-2">
+            <Text className="text-xs font-pretendard-regular text-gray-400">
               유사 분실물 자동 분석
             </Text>
-            <View className="flex-row items-center gap-1">
-              <View className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-            </View>
           </TouchableOpacity>
 
           {/* CCTV 분석 카드 */}
           <TouchableOpacity
-            className="flex-1 bg-white rounded-3xl p-4 border border-gray-100 shadow-sm overflow-hidden"
+            className="flex-1 bg-white rounded-3xl p-4 border border-gray-100 shadow-sm"
             onPress={() => router.push(ROUTES.CCTV_ITEMS)}
             activeOpacity={0.85}
           >
             <View className="w-11 h-11 rounded-2xl bg-red-400 items-center justify-center mb-3">
               <Camera size={22} color="#fff" />
             </View>
-            {/* 배경 원 장식 */}
-            <View
-              className="absolute top-3 right-3 w-16 h-16 rounded-full bg-red-100"
-              style={{ opacity: 0.4 }}
-            />
             <Text className="text-sm font-pretendard-bold text-gray-900 mb-0.5">
               CCTV 분석
             </Text>
-            <Text className="text-xs font-pretendard-regular text-gray-400 mb-2">
+            <Text className="text-xs font-pretendard-regular text-gray-400">
               도난 영상 분석 현황
             </Text>
-            <View className="flex-row items-center gap-1">
-              <View className="w-1.5 h-1.5 rounded-full bg-gray-300" />
-            </View>
           </TouchableOpacity>
         </View>
 

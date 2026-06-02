@@ -232,6 +232,9 @@ export interface ChatRoomRecord {
   item_name: string;
   item_id: number;
   item_status: ItemStatus | null;
+  unread_count?: number;
+  update_time?: string;
+  last_message?: string;
 }
 
 export interface MessageRecord {

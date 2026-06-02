@@ -1,11 +1,11 @@
 import { chatService } from "@/api/services/chat";
 import { ChatRoomRecord } from "@/api/types";
+import NotificationBell from "@/components/NotificationBell";
 import { fonts } from "@/constants/typography";
 import { ROUTES } from "@/constants/url";
 import { useChatQueries } from "@/hooks/queries/useChatQueries";
 import { useProfile } from "@/hooks/queries/useUserQueries";
 import { useFocusEffect, useRouter } from "expo-router";
-import NotificationBell from "@/components/NotificationBell";
 import { MessageCircle, User } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -25,7 +25,11 @@ function timeAgo(dateStr: string) {
   if (min < 60) return `${min}분 전`;
   const hour = Math.floor(min / 60);
   if (hour < 24) return `${hour}시간 전`;
-  return "어제";
+  const day = Math.floor(hour / 24);
+  if (day < 2) return "어제";
+  if (day < 7) return `${day}일 전`;
+  const d = new Date(dateStr);
+  return `${d.getMonth() + 1}월 ${d.getDate()}일`;
 }
 
 const ChatRoomSkeleton = () => (
@@ -38,13 +42,7 @@ const ChatRoomSkeleton = () => (
           { width: "40%", height: 15, marginBottom: 6 },
         ]}
       />
-      <View
-        style={[
-          styles.skeletonLine,
-          { width: "60%", height: 12, marginBottom: 6 },
-        ]}
-      />
-      <View style={[styles.skeletonLine, { width: "30%", height: 12 }]} />
+      <View style={[styles.skeletonLine, { width: "60%", height: 12 }]} />
     </View>
   </View>
 );
@@ -74,7 +72,18 @@ export default function ChatScreen() {
           return res.success ? res.data : null;
         }),
       );
-      setChatRooms((rooms.filter(Boolean) as ChatRoomRecord[]).sort((a, b) => b.room_id - a.room_id));
+      setChatRooms(
+        (rooms.filter(Boolean) as ChatRoomRecord[]).sort((a, b) => {
+          // update_time 우선, 없으면 room_id 내림차순
+          if (a.update_time && b.update_time) {
+            return (
+              new Date(b.update_time).getTime() -
+              new Date(a.update_time).getTime()
+            );
+          }
+          return b.room_id - a.room_id;
+        }),
+      );
     } catch (e) {
       console.error("채팅방 목록 조회 실패", e);
       setChatRooms([]);
@@ -83,12 +92,10 @@ export default function ChatScreen() {
     }
   }, [roomListData]);
 
-  // 채팅방 ID 목록 변경 시 (새 채팅방 생성 등)
   useEffect(() => {
     loadChatRooms();
   }, [loadChatRooms]);
 
-  // 채팅 탭으로 돌아올 때 방 상태 갱신 (거래 완료 등 상태 변경 반영)
   useFocusEffect(
     useCallback(() => {
       loadChatRooms();
@@ -155,6 +162,16 @@ export default function ChatScreen() {
                 ? item.finder_nickname
                 : item.owner_nickname;
 
+            const isOpen = item.status === "OPEN";
+            const statusLabel =
+              item.status === "OPEN"
+                ? "진행 중"
+                : item.status === "RESOLVED_RETURNED"
+                  ? "반환 완료"
+                  : "종료";
+
+            const hasUnread = isOpen && (item.unread_count ?? 0) > 0;
+
             return (
               <TouchableOpacity
                 style={styles.chatCard}
@@ -169,23 +186,45 @@ export default function ChatScreen() {
                 <View style={styles.avatar}>
                   <User size={24} color="#aaa" />
                 </View>
+
                 <View style={styles.chatInfo}>
+                  {/* 상단: 닉네임 · 물건명 ........ 시간 */}
                   <View style={styles.chatTopRow}>
-                    <Text style={styles.chatNickname} numberOfLines={1}>
-                      {counterpartNickname}
-                    </Text>
+                    <View style={styles.chatTitleGroup}>
+                      <Text style={styles.chatNickname} numberOfLines={1}>
+                        {counterpartNickname}
+                      </Text>
+                      {item.item_name ? (
+                        <>
+                          <Text style={styles.chatDot}>·</Text>
+                          <Text style={styles.chatItemName} numberOfLines={1}>
+                            {item.item_name}
+                          </Text>
+                        </>
+                      ) : null}
+                    </View>
+                    {item.update_time ? (
+                      <Text style={styles.chatTime}>
+                        {timeAgo(item.update_time)}
+                      </Text>
+                    ) : null}
                   </View>
-                  <Text style={styles.chatItemDetail} numberOfLines={1}>
-                    {item.item_name}
-                  </Text>
+
+                  {/* 하단: 마지막 메시지 ........ (뱃지 또는 상태) */}
                   <View style={styles.chatBottomRow}>
-                    <Text style={styles.chatStatus} numberOfLines={1}>
-                      {item.status === "OPEN"
-                        ? "진행 중"
-                        : item.status === "RESOLVED_RETURNED"
-                          ? "반환 완료"
-                          : "종료"}
+                    <Text style={styles.chatLastMessage} numberOfLines={1}>
+                      {item.last_message ??
+                        (isOpen ? "대화를 시작해보세요" : statusLabel)}
                     </Text>
+                    {hasUnread ? (
+                      <View style={styles.unreadBadge}>
+                        <Text style={styles.unreadBadgeText}>
+                          {item.unread_count! > 99 ? "99+" : item.unread_count}
+                        </Text>
+                      </View>
+                    ) : !isOpen ? (
+                      <Text style={styles.chatStatus}>{statusLabel}</Text>
+                    ) : null}
                   </View>
                 </View>
               </TouchableOpacity>
@@ -236,28 +275,74 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: "#6366f130",
   },
-  skeleton: {
-    backgroundColor: "#f0f0f0",
-    borderWidth: 0,
-  },
-  skeletonLine: {
-    backgroundColor: "#f0f0f0",
-    borderRadius: 6,
-  },
-  chatInfo: { flex: 1, gap: 3 },
+  skeleton: { backgroundColor: "#f0f0f0", borderWidth: 0 },
+  skeletonLine: { backgroundColor: "#f0f0f0", borderRadius: 6 },
+  chatInfo: { flex: 1, gap: 4 },
   chatTopRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: 8,
   },
-  chatNickname: { fontSize: 15, fontFamily: fonts.bold, color: "#111" },
-  chatItemDetail: { fontSize: 12, fontFamily: fonts.regular, color: "#6366f1" },
+  chatTitleGroup: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: 6,
+    flex: 1,
+    minWidth: 0,
+  },
+  chatNickname: {
+    fontSize: 15,
+    fontFamily: fonts.bold,
+    color: "#111",
+    flexShrink: 0,
+  },
+  chatDot: { fontSize: 12, color: "#ccc" },
+  chatItemName: {
+    fontSize: 12,
+    fontFamily: fonts.regular,
+    color: "#6366f1",
+    flex: 1,
+  },
+  chatTime: {
+    fontSize: 11,
+    fontFamily: fonts.regular,
+    color: "#aaa",
+    flexShrink: 0,
+  },
   chatBottomRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: 8,
   },
-  chatStatus: { fontSize: 13, fontFamily: fonts.regular, color: "#aaa" },
+  chatLastMessage: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: fonts.regular,
+    color: "#666",
+  },
+  chatStatus: {
+    fontSize: 11,
+    fontFamily: fonts.regular,
+    color: "#888",
+    flexShrink: 0,
+  },
+  unreadBadge: {
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#6366f1",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 6,
+    flexShrink: 0,
+  },
+  unreadBadgeText: {
+    fontSize: 11,
+    fontFamily: fonts.bold,
+    color: "#fff",
+  },
   emptyBox: { alignItems: "center", paddingVertical: 80, gap: 12 },
   emptyIconWrap: {
     width: 72,

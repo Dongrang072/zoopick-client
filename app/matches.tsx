@@ -15,6 +15,7 @@ import {
   MessageCircle,
   QrCode,
   Sparkles,
+  User,
   XCircle,
 } from "lucide-react-native";
 import { useState } from "react";
@@ -75,9 +76,7 @@ function AcceptedSheet({
             <View style={sheetStyles.infoBox}>
               <View style={sheetStyles.finderRow}>
                 <View style={sheetStyles.finderAvatar}>
-                  <Text style={sheetStyles.finderAvatarText}>
-                    {match.found_nickname?.charAt(0) ?? "?"}
-                  </Text>
+                  <User size={22} color="#aaa" />
                 </View>
                 <View>
                   <Text style={sheetStyles.finderName}>
@@ -163,7 +162,6 @@ export default function MatchesScreen() {
   const [modalType, setModalType] = useState<"reject" | null>(null);
   const [acceptedIds, setAcceptedIds] = useState<number[]>([]);
   const [rejectedIds, setRejectedIds] = useState<number[]>([]);
-  // 수락 후 바텀시트
   const [acceptedSheet, setAcceptedSheet] = useState<{
     match: ItemMatchResultResponse;
     matchType: "CHAT" | "LOCKER";
@@ -176,49 +174,12 @@ export default function MatchesScreen() {
 
   const matches = data?.success ? data.data : [];
 
-  /*
-  // ⚠️ 임시 테스트용 mock (검증 후 반드시 삭제!)
-  const USE_MOCK = true;
-  const mockMatches: ItemMatchResultResponse[] = [
-    {
-      match_id: 999,
-      status: "CANDIDATE",
-      score: 0.92,
-      found_item_id: 52,
-      found_post_id: 45,
-      found_post_title: "파란 물병 주웠어요",
-      found_image_url: "",
-      location_name: "제1공학관 Y5441",
-      found_nickname: "테스트유저",
-      found_department: "컴퓨터공학과",
-      counterpart_id: 7,
-    },
-    {
-      match_id: 998,
-      status: "CANDIDATE",
-      score: 0.78,
-      found_item_id: 51,
-      found_post_id: 44,
-      found_post_title: "검정 텀블러 발견",
-      found_image_url: "",
-      location_name: "제2공학관",
-      found_nickname: "신성민",
-      found_department: "산업경영공학과",
-      counterpart_id: 8,
-    },
-  ];
-
-  const matches = USE_MOCK ? mockMatches : data?.success ? data.data : [];
-  */
-
-  // 진행 중 매칭 (수락/거절 안 한 것)
   const pendingMatches = matches
     .filter((m) => m.status === "CANDIDATE" || m.status === "NOTIFIED")
-    .filter((m) => !rejectedIds.includes(m.match_id)) // 거절된 것 제외
-    .filter((m) => !acceptedIds.includes(m.match_id)) // 수락된 것 제외 (완료 섹션으로 이동)
+    .filter((m) => !rejectedIds.includes(m.match_id))
+    .filter((m) => !acceptedIds.includes(m.match_id))
     .sort((a, b) => b.score - a.score);
 
-  // 완료된 매칭 (수락된 것들)
   const completedMatches = matches.filter((m) =>
     acceptedIds.includes(m.match_id),
   );
@@ -253,10 +214,9 @@ export default function MatchesScreen() {
           return;
         }
 
-        const { match_type, counterpart_id } = res.data;
+        const { match_type } = res.data;
         setAcceptedIds((prev) => [...prev, match.match_id]);
 
-        // 수락 후 바텀시트 표시
         setAcceptedSheet({ match, matchType: match_type });
       },
       onError: () => {
@@ -275,7 +235,6 @@ export default function MatchesScreen() {
     if (!selectedMatchId) return;
     const targetId = selectedMatchId;
     closeModal();
-    // 거절 즉시 카드 제거
     setRejectedIds((prev) => [...prev, targetId]);
 
     rejectMutation.mutate(targetId, {
@@ -288,7 +247,6 @@ export default function MatchesScreen() {
         });
       },
       onError: () => {
-        // API 실패 시 복원
         setRejectedIds((prev) => prev.filter((id) => id !== targetId));
         Toast.show({
           type: "error",
@@ -300,7 +258,6 @@ export default function MatchesScreen() {
     });
   };
 
-  // 바텀시트 - 채팅하기
   const handleGoChat = () => {
     if (!acceptedSheet) return;
     const { match } = acceptedSheet;
@@ -332,11 +289,9 @@ export default function MatchesScreen() {
     );
   };
 
-  // 바텀시트 - 사물함 QR
   const handleGoLocker = () => {
     setAcceptedSheet(null);
     router.push(ROUTES.SCAN);
-    // TODO: locker_id 활용하여 사물함 안내 화면으로 이동
   };
 
   if (isLoading) {
@@ -352,7 +307,6 @@ export default function MatchesScreen() {
     );
   }
 
-  // FlatList 데이터: 진행 중 + 구분선 + 완료된 것
   const listData: (
     | { type: "match"; data: ItemMatchResultResponse; isCompleted: boolean }
     | { type: "divider" }
@@ -374,7 +328,6 @@ export default function MatchesScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* 헤더 */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
           <ChevronLeft size={22} color="#333" />
@@ -501,9 +454,7 @@ export default function MatchesScreen() {
                   ) : null}
                   <View style={styles.finderBox}>
                     <View style={styles.finderAvatar}>
-                      <Text style={styles.finderAvatarText}>
-                        {match.found_nickname?.charAt(0) ?? "?"}
-                      </Text>
+                      <User size={18} color="#aaa" />
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.finderName}>
@@ -572,9 +523,7 @@ export default function MatchesScreen() {
                 ) : null}
                 <View style={styles.finderBox}>
                   <View style={styles.finderAvatar}>
-                    <Text style={styles.finderAvatarText}>
-                      {match.found_nickname?.charAt(0) ?? "?"}
-                    </Text>
+                    <User size={18} color="#aaa" />
                   </View>
                   <View>
                     <Text style={styles.finderName}>
@@ -756,7 +705,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   scoreBadgeText: { fontSize: 11, fontFamily: fonts.bold, color: "#fff" },
-  // 완료 카드 오버레이
   completedOverlay: {
     position: "absolute",
     top: 0,
@@ -814,12 +762,13 @@ const styles = StyleSheet.create({
   finderAvatar: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: 10,
     backgroundColor: "#eef2ff",
+    borderWidth: 1.5,
+    borderColor: "#6366f130",
     alignItems: "center",
     justifyContent: "center",
   },
-  finderAvatarText: { fontSize: 13, fontFamily: fonts.bold, color: "#6366f1" },
   finderName: { fontSize: 12, fontFamily: fonts.bold, color: "#333" },
   finderDept: {
     fontSize: 11,
@@ -1007,12 +956,13 @@ const sheetStyles = StyleSheet.create({
   finderAvatar: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 12,
     backgroundColor: "#eef2ff",
+    borderWidth: 1.5,
+    borderColor: "#6366f130",
     alignItems: "center",
     justifyContent: "center",
   },
-  finderAvatarText: { fontSize: 16, fontFamily: fonts.bold, color: "#6366f1" },
   finderName: { fontSize: 14, fontFamily: fonts.bold, color: "#111" },
   finderDept: {
     fontSize: 11,

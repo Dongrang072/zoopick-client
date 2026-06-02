@@ -1,6 +1,6 @@
 import client from "@/api/client";
 import { fonts } from "@/constants/typography";
-import { ROUTES } from "@/constants/url";
+import { handleNotificationRouting } from "@/utils/notifications/routing";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import {
@@ -29,9 +29,11 @@ type NotificationRecord = {
     | "MATCH_FOUND"
     | "CHAT_MESSAGE"
     | "ITEM_RETURNED"
+    | "ITEM_REPORTED"
     | "THEFT_SUSPECTED"
     | "CCTV_FOUND"
-    | "LOCKER_READY";
+    | "LOCKER_READY"
+    | "QR_SCANNED";
   payload: Record<string, any>;
   read_at: string | null;
   created_at: string;
@@ -42,50 +44,42 @@ const NOTIFICATION_CONFIG = {
     icon: Sparkles,
     label: "매칭 완료",
     message: "분실물과 매칭되었어요! 확인해보세요.",
-    route: ROUTES.MATCHES,
   },
   CHAT_MESSAGE: {
     icon: MessageCircle,
     label: "새 메시지",
     message: "새로운 채팅 메시지가 있어요.",
-    route: ROUTES.CHAT,
   },
   ITEM_RETURNED: {
     icon: CheckCircle,
     label: "반환 완료",
     message: "물건이 성공적으로 반환되었어요.",
-    route: ROUTES.CHAT,
   },
   ITEM_REPORTED: {
     icon: CheckCircle,
     label: "분실물",
     message: "분실물이 있어요. 확인해보세요",
-    route: ROUTES.LOST_ITEM_BOARD,
   },
   THEFT_SUSPECTED: {
     icon: AlertTriangle,
     label: "도난 의심",
     message: "물건에 도난 의심 정황이 감지되었어요.",
-    route: ROUTES.LOST_ITEM_BOARD,
   },
   CCTV_FOUND: {
     icon: AlertTriangle,
     label: "CCTV 발견",
     message: "CCTV에서 내 물건으로 추정되는 영상이 감지되었어요.",
-    route: ROUTES.CCTV_ITEMS,
   },
   LOCKER_READY: {
     icon: Package,
     label: "보관함 준비",
     message: "사물함이 준비되었어요. QR을 스캔해 물건을 꺼내세요.",
-    route: ROUTES.SCAN,
   },
   QR_SCANNED: {
     icon: CheckCircle,
     label: "분실물 발견",
     message: "분실물이 발견되었어요.",
-    route: ROUTES.CHAT,
-  }
+  },
 };
 
 function timeAgo(dateStr: string) {
@@ -149,6 +143,7 @@ export default function NotificationsScreen() {
   };
 
   const handleNotifPress = async (item: NotificationRecord) => {
+    // 읽음 처리
     try {
       if (!item.read_at) {
         await client.patch(`/api/notifications/${item.id}/mark-as-read`);
@@ -162,9 +157,12 @@ export default function NotificationsScreen() {
     } catch (e) {
       console.error("알림 읽음 처리 실패", e);
     }
-    const config = NOTIFICATION_CONFIG[item.type];
-    if (!config) return;
-    router.push(config.route as any);
+
+    // 라우팅 — 푸시 알림이랑 동일한 로직 사용 (type + payload 합쳐서 전달)
+    handleNotificationRouting({
+      type: item.type,
+      ...(item.payload ?? {}),
+    });
   };
 
   const unreadCount = notifications.filter((n) => !n.read_at).length;

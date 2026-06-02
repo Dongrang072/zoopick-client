@@ -332,7 +332,10 @@ export default function ChatRoomScreen() {
     setShowCloseModal(false);
     const itemId = chatRoom?.item_id;
     if (itemId) {
-      router.replace({ pathname: ROUTES.SCAN, params: { itemId: itemId, mode: "store", roomId: String(roomIdNum) } });
+      router.replace({
+        pathname: ROUTES.SCAN,
+        params: { itemId: itemId, mode: "store", roomId: String(roomIdNum) },
+      });
     }
   }, [chatRoom, roomIdNum]);
 
@@ -351,7 +354,7 @@ export default function ChatRoomScreen() {
             });
             router.replace({
               pathname: ROUTES.SCAN,
-              params: { itemId: itemId, mode: "retrieve" }
+              params: { itemId: itemId, mode: "retrieve" },
             });
           } else {
             Toast.show({
@@ -505,7 +508,9 @@ export default function ChatRoomScreen() {
               setShowCloseModal(true);
             }}
           >
-            <Text style={styles.completeBtnText}>{isOwner ? "반환 완료" : "양도 완료"}</Text>
+            <Text style={styles.completeBtnText}>
+              {isOwner ? "반환 완료" : "양도 완료"}
+            </Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.reopenBtn} onPress={handleReopen}>
@@ -522,7 +527,16 @@ export default function ChatRoomScreen() {
 
       {/* 분실물 배너 */}
       {chatRoom && (
-        <View style={styles.itemBanner}>
+        <TouchableOpacity
+          style={styles.itemBanner}
+          onPress={() =>
+            router.push({
+              pathname: ROUTES.LOST_ITEM_DETAIL,
+              params: { itemId: String(chatRoom.item_id) },
+            })
+          }
+          activeOpacity={0.7}
+        >
           <View style={styles.itemBannerIcon}>
             <Package size={16} color="#6366f1" />
           </View>
@@ -530,14 +544,16 @@ export default function ChatRoomScreen() {
             {chatRoom.item_name}
           </Text>
           <ChevronRight size={14} color="#aaa" />
-        </View>
+        </TouchableOpacity>
       )}
 
       {isClosed && (
         <View style={styles.closedBanner}>
           <Text style={styles.closedText}>
             {chatRoom?.status === "RESOLVED_RETURNED"
-              ? isOwner ? "반환이 완료된 채팅입니다" : "양도가 완료된 채팅입니다"
+              ? isOwner
+                ? "반환이 완료된 채팅입니다"
+                : "양도가 완료된 채팅입니다"
               : "종료된 채팅입니다"}
           </Text>
         </View>
@@ -614,14 +630,18 @@ export default function ChatRoomScreen() {
                     style={styles.modalBtn}
                     onPress={() => handleClose("RETURNED", true)}
                   >
-                    <Text style={styles.modalBtnText}>📦 사물함에서 물건을 꺼낼게요</Text>
+                    <Text style={styles.modalBtnText}>
+                      📦 사물함에서 물건을 꺼낼게요
+                    </Text>
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
                     style={styles.modalBtn}
                     onPress={() => handleClose("RETURNED", false)}
                   >
-                    <Text style={styles.modalBtnText}>🤝 직접 물건을 받았어요</Text>
+                    <Text style={styles.modalBtnText}>
+                      🤝 직접 물건을 받았어요
+                    </Text>
                   </TouchableOpacity>
                 )}
               </>
@@ -632,7 +652,9 @@ export default function ChatRoomScreen() {
                     style={styles.modalBtn}
                     onPress={handleOpenLocker}
                   >
-                    <Text style={styles.modalBtnText}>📦 사물함에 물건을 넣을게요</Text>
+                    <Text style={styles.modalBtnText}>
+                      📦 사물함에 물건을 넣을게요
+                    </Text>
                   </TouchableOpacity>
                 )}
                 {itemStatus !== "IN_LOCKER" && (
@@ -640,7 +662,9 @@ export default function ChatRoomScreen() {
                     style={styles.modalBtn}
                     onPress={() => handleClose("RETURNED")}
                   >
-                    <Text style={styles.modalBtnText}>✅ 물건을 찾아줬어요</Text>
+                    <Text style={styles.modalBtnText}>
+                      ✅ 물건을 찾아줬어요
+                    </Text>
                   </TouchableOpacity>
                 )}
               </>

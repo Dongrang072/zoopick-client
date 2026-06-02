@@ -55,10 +55,15 @@ function formatDateTime(dateStr: string) {
 export default function LostItemDetail() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { id: itemPostId, itemId } = useLocalSearchParams<{ id?: string, itemId?: string }>();
+  const { id: itemPostId, itemId } = useLocalSearchParams<{
+    id?: string;
+    itemId?: string;
+  }>();
   const id = itemPostId ? itemPostId : itemId;
-  const itemDetailQuery = itemPostId ? useItemQueries.useItemDetail : useItemQueries.useItemDetailByItemId;
-  
+  const itemDetailQuery = itemPostId
+    ? useItemQueries.useItemDetail
+    : useItemQueries.useItemDetailByItemId;
+
   const [showImageModal, setShowImageModal] = useState(false);
 
   const { data: response, isLoading } = itemDetailQuery(id!);
@@ -92,7 +97,10 @@ export default function LostItemDetail() {
           }
         },
         onError: () => {
-          Alert.alert("알림", "채팅방을 열 수 없어요. 잠시 후 다시 시도해주세요.");
+          Alert.alert(
+            "알림",
+            "채팅방을 열 수 없어요. 잠시 후 다시 시도해주세요.",
+          );
         },
       },
     );
@@ -107,7 +115,7 @@ export default function LostItemDetail() {
       : sharedBuildingName;
     try {
       await Share.share({
-        message: `[줍픽] ${itemPost.title ?? "분실물"} - ${locationText}`,
+        message: `[줍줍] ${itemPost.title ?? "분실물"} - ${locationText}`,
       });
     } catch {
       Alert.alert("공유 실패");
@@ -217,9 +225,21 @@ export default function LostItemDetail() {
               </Text>
             </View>
             {isInLocker && (
-              <View style={[styles.statusBadge, { backgroundColor: "#fff1f2", flexDirection: "row", alignItems: "center", gap: 4 }]}>
+              <View
+                style={[
+                  styles.statusBadge,
+                  {
+                    backgroundColor: "#fff1f2",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 4,
+                  },
+                ]}
+              >
                 <Lock size={11} color="#f43f5e" />
-                <Text style={[styles.statusBadgeText, { color: "#f43f5e" }]}>{ITEM_STATUS_MAP.IN_LOCKER}</Text>
+                <Text style={[styles.statusBadgeText, { color: "#f43f5e" }]}>
+                  {ITEM_STATUS_MAP.IN_LOCKER}
+                </Text>
               </View>
             )}
           </View>
@@ -251,7 +271,8 @@ export default function LostItemDetail() {
             <View style={styles.theftBanner}>
               <AlertTriangle size={16} color="#dc2626" />
               <Text style={styles.theftBannerText}>
-                도난이 확정된 물건입니다. 경찰에 신고되었거나 수사 중일 수 있어요.
+                도난이 확정된 물건입니다. 경찰에 신고되었거나 수사 중일 수
+                있어요.
               </Text>
             </View>
           )}
@@ -295,10 +316,7 @@ export default function LostItemDetail() {
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 8 }]}>
         {!isMyPost && (
           <TouchableOpacity
-            style={[
-              styles.chatBtn,
-              isTheftConfirmed && styles.chatBtnDisabled,
-            ]}
+            style={[styles.chatBtn, isTheftConfirmed && styles.chatBtnDisabled]}
             onPress={isTheftConfirmed ? undefined : handleChatPress}
             activeOpacity={isTheftConfirmed ? 1 : 0.85}
             disabled={createChatRoomMutation.isPending || isTheftConfirmed}
@@ -388,7 +406,12 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 100,
   },
-  badgeRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
+  badgeRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 12,
+  },
   categoryBadge: {
     backgroundColor: "#f3f4f6",
     borderRadius: 20,
